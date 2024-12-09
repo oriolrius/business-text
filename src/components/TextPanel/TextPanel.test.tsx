@@ -214,6 +214,54 @@ describe('Panel', () => {
     expect(screen.getByTestId(TEST_IDS.text.content)).toHaveStyle({ color: 'red' });
   });
 
+  it('Should call replaceVariables with externalStyles css for component', async () => {
+    const streamSubscribe = jest.fn(() => ({
+      unsubscribe: jest.fn(),
+    }));
+
+    const eventBus = {
+      getStream: jest.fn(() => ({
+        subscribe: streamSubscribe,
+      })),
+    };
+
+    const replaceVariables = jest.fn((str: string) => str);
+
+    const items = [
+      {
+        id: '1',
+        url: 'https://abc.com/main.js',
+      },
+      {
+        id: '2',
+        url: 'https://bbb.com/main.js',
+      },
+    ];
+
+    await act(async () =>
+      render(
+        getComponent({
+          options: {
+            ...defaultOptions,
+            defaultContent: 'hello',
+            styles: '.styles-test{}; .dt-row{color:red}',
+            externalStyles: items,
+          },
+          replaceVariables,
+          data: { series: [] } as any,
+          eventBus: eventBus as any,
+          id: 5,
+        })
+      )
+    );
+
+    expect(replaceVariables).toHaveBeenCalledWith('https://abc.com/main.js');
+    expect(replaceVariables).toHaveBeenCalledWith('https://bbb.com/main.js');
+    expect(replaceVariables).toHaveBeenCalledWith('.styles-test{}; .dt-row{color:red}', {
+      theme: { value: { color: 'blue' } },
+    });
+  });
+
   describe('Helpers execution', () => {
     const helpers = `
       const subscription = context.grafana.eventBus.subscribe('event', () => {});

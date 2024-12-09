@@ -142,6 +142,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -219,6 +220,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -291,6 +293,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -351,6 +354,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -418,31 +422,35 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
-        "w": 6,
+        "h": 8,
+        "w": 12,
         "x": 12,
         "y": 13
       },
-      "id": 8,
+      "id": 26,
       "options": {
         "afterRender": "",
-        "content": "- Timestamp: {{variable \"__from\"}}\n- Seconds: {{variable \"__from:date:seconds\"}}\n- Parsed: {{variable \"__from:date:YYYY-MM-DD\"}}\n- ISO:\n  - From {{variable \"__from:date:iso\"}}\n  - To {{variable \"__from:date\"}}\n\n## {{test}}\n\n{{json @root}}",
-        "contentPartials": [],
+        "content": "```html\n{{> Index}}\n```",
+        "contentPartials": [
+          {
+            "id": "1a363455-fd81-4afd-993b-beb062fe29ac",
+            "name": "Index",
+            "url": "https://volkovlabs.io/${pages}.html"
+          }
+        ],
         "defaultContent": "The query didn't return any results.",
         "editor": {
           "format": "auto",
-          "height": 400,
           "language": "markdown"
         },
         "editors": [],
-        "externalScripts": [],
         "externalStyles": [],
-        "handlebars": "",
         "helpers": "",
         "renderMode": "everyRow",
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -462,89 +470,9 @@
             "name": "test"
           },
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "marcusolsson-static-datasource",
-            "uid": "U0HP2Rv4z"
-          },
-          "frame": {
-            "fields": [
-              {
-                "config": {},
-                "name": "test",
-                "type": "string",
-                "values": ["test2"]
-              }
-            ],
-            "meta": {},
-            "name": "test2"
-          },
-          "hide": false,
-          "refId": "B"
         }
       ],
-      "title": "Date Variables",
-      "type": "marcusolsson-dynamictext-panel"
-    },
-    {
-      "datasource": {
-        "type": "grafana",
-        "uid": "grafana"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 6,
-        "x": 18,
-        "y": 13
-      },
-      "id": 17,
-      "options": {
-        "afterRender": "",
-        "content": "```json\n{{{json @root}}}\n```",
-        "contentPartials": [],
-        "defaultContent": "The query didn't return any results.",
-        "editor": {
-          "format": "auto",
-          "height": 100,
-          "language": "markdown"
-        },
-        "editors": ["styles"],
-        "externalScripts": [],
-        "externalStyles": [],
-        "helpers": "",
-        "renderMode": "allRows",
-        "styles": "& {\n  padding: 0;\n  margin: 0;\n}",
-        "wrap": true
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "datasource",
-            "uid": "grafana"
-          },
-          "refId": "A"
-        }
-      ],
-      "title": "",
+      "title": "Partial with replace",
       "type": "marcusolsson-dynamictext-panel"
     },
     {
@@ -595,6 +523,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -669,6 +598,7 @@
         "styles": "td.name {\n  border: 0;\n  background-color: #5d3fc4;\n  color: white;\n}\n\nb.name {\n  font-family: silom;\n  font-size:20px;\n}\n\ntd.photo {\n  border:2px solid #5D3FC4;\n  text-align:center;\n}\n\ntd.desc {\n  text-align:right;\n  border:0;\n  background-color:#f6f2ff;\n  color:#5F3DC4;\n}",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -769,15 +699,15 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 12,
+        "h": 12,
+        "w": 6,
         "x": 12,
-        "y": 25
+        "y": 21
       },
-      "id": 9,
+      "id": 8,
       "options": {
         "afterRender": "",
-        "content": "- Timestamp: {{variable \"__from\"}}\n- Seconds: {{variable \"__from:date:seconds\"}}\n- Parsed: {{variable \"__from:date:YYYY-MM-DD\"}}\n- ISO:\n  - From {{variable \"__from:date:iso\"}}\n  - To {{variable \"__from:date\"\n\n## {{test}}",
+        "content": "- Timestamp: {{variable \"__from\"}}\n- Seconds: {{variable \"__from:date:seconds\"}}\n- Parsed: {{variable \"__from:date:YYYY-MM-DD\"}}\n- ISO:\n  - From {{variable \"__from:date:iso\"}}\n  - To {{variable \"__from:date\"}}\n\n## {{test}}\n\n{{json @root}}",
         "contentPartials": [],
         "defaultContent": "The query didn't return any results.",
         "editor": {
@@ -794,6 +724,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -835,7 +766,68 @@
           "refId": "B"
         }
       ],
-      "title": "Error Output",
+      "title": "Date Variables",
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana",
+        "uid": "grafana"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 6,
+        "x": 18,
+        "y": 21
+      },
+      "id": 17,
+      "options": {
+        "afterRender": "",
+        "content": "```json\n{{{json @root}}}\n```",
+        "contentPartials": [],
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "height": 100,
+          "language": "markdown"
+        },
+        "editors": ["styles"],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "allRows",
+        "styles": "& {\n  padding: 0;\n  margin: 0;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "5.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "",
       "type": "marcusolsson-dynamictext-panel"
     },
     {
@@ -887,6 +879,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -919,6 +912,100 @@
     },
     {
       "datasource": {
+        "type": "marcusolsson-static-datasource",
+        "uid": "U0HP2Rv4z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 33
+      },
+      "id": 9,
+      "options": {
+        "afterRender": "",
+        "content": "- Timestamp: {{variable \"__from\"}}\n- Seconds: {{variable \"__from:date:seconds\"}}\n- Parsed: {{variable \"__from:date:YYYY-MM-DD\"}}\n- ISO:\n  - From {{variable \"__from:date:iso\"}}\n  - To {{variable \"__from:date\"\n\n## {{test}}",
+        "contentPartials": [],
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "height": 400,
+          "language": "markdown"
+        },
+        "editors": [],
+        "externalScripts": [],
+        "externalStyles": [],
+        "handlebars": "",
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": "",
+        "wrap": true
+      },
+      "pluginVersion": "5.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "marcusolsson-static-datasource",
+            "uid": "U0HP2Rv4z"
+          },
+          "frame": {
+            "fields": [
+              {
+                "config": {},
+                "name": "test",
+                "type": "string",
+                "values": ["test"]
+              }
+            ],
+            "meta": {},
+            "name": "test"
+          },
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "marcusolsson-static-datasource",
+            "uid": "U0HP2Rv4z"
+          },
+          "frame": {
+            "fields": [
+              {
+                "config": {},
+                "name": "test",
+                "type": "string",
+                "values": ["test2"]
+              }
+            ],
+            "meta": {},
+            "name": "test2"
+          },
+          "hide": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Error Output",
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
         "type": "volkovlabs-rss-datasource",
         "uid": "rZAdZdf82"
       },
@@ -944,7 +1031,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 34
+        "y": 42
       },
       "id": 3,
       "options": {
@@ -966,6 +1053,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -1044,6 +1132,7 @@
         "styles": ".button {\n  background-color: ${theme.colors.primary.main};\n  border: none;\n  color: ${theme.colors.primary.contrastText};\n  padding: 4px 8px;\n  border-radius: ${theme.shape.radius.default};\n}",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -1065,6 +1154,82 @@
         }
       ],
       "title": "Theme",
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "marcusolsson-static-datasource",
+        "uid": "U0HP2Rv4z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 46
+      },
+      "id": 27,
+      "options": {
+        "afterRender": "",
+        "content": "<button type=\"button\" class=\"hvr-bounce-out\">Primary</button>\n<button type=\"button\" class=\"hvr-rotate\">Primary</button>\n<button type=\"button\" class=\"hvr-float\">Primary</button>",
+        "contentPartials": [],
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "language": "markdown"
+        },
+        "editors": ["styles"],
+        "externalStyles": [
+          {
+            "id": "cb68b10f-1878-40aa-bae2-b2da13189fd7",
+            "url": "https://cdnjs.cloudflare.com/ajax/${part}/hover.css/2.3.1/css/hover.css"
+          }
+        ],
+        "helpers": "",
+        "renderMode": "allRows",
+        "styles": "",
+        "wrap": true
+      },
+      "pluginVersion": "5.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "marcusolsson-static-datasource",
+            "uid": "U0HP2Rv4z"
+          },
+          "frame": {
+            "fields": [
+              {
+                "config": {},
+                "name": "test",
+                "type": "string",
+                "values": ["", ""]
+              }
+            ],
+            "meta": {},
+            "name": "test"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "CSS external with variable",
       "type": "marcusolsson-dynamictext-panel"
     },
     {
@@ -1111,9 +1276,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 46
+        "y": 54
       },
-      "id": 26,
+      "id": 28,
       "options": {
         "afterRender": "",
         "content": "<div >\n{{#each data}}\n    <div style=\"background-color: {{fieldStatusColor \"value\" }}\">Color from value field</div>\n    <div style=\"background-color: {{statusColor}}\">Status color from Time</div>\n    {{time}} -- {{value}} \n{{/each}}\n</div>",
@@ -1131,6 +1296,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -1204,9 +1370,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 46
+        "y": 54
       },
-      "id": 27,
+      "id": 29,
       "options": {
         "afterRender": "",
         "content": "<div style=\"background-color: {{fieldStatusColor \"value\" }}; padding:10px\">\n<span style=\"background-color: {{statusColor}}; padding:5px\">\n```json\n{{{json @root}}}\n```\n</span> \n</div>",
@@ -1224,6 +1390,7 @@
         "styles": "",
         "wrap": true
       },
+      "pluginVersion": "5.5.0",
       "targets": [
         {
           "datasource": {
@@ -1262,18 +1429,13 @@
     "list": [
       {
         "current": {
-          "text": ["All"],
+          "text": ["$__all"],
           "value": ["$__all"]
         },
         "includeAll": true,
         "multi": true,
         "name": "test",
         "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
           {
             "selected": false,
             "text": "test1",
@@ -1292,6 +1454,61 @@
         ],
         "query": "test1,test2,test3",
         "type": "custom"
+      },
+      {
+        "current": {
+          "text": "index",
+          "value": "index"
+        },
+        "description": "",
+        "label": "pages",
+        "name": "pages",
+        "options": [
+          {
+            "selected": true,
+            "text": "index",
+            "value": "index"
+          },
+          {
+            "selected": false,
+            "text": "main",
+            "value": "main"
+          },
+          {
+            "selected": false,
+            "text": "test",
+            "value": "test"
+          }
+        ],
+        "query": "index, main, test",
+        "type": "custom"
+      },
+      {
+        "current": {
+          "text": "libs",
+          "value": "libs"
+        },
+        "label": "part",
+        "name": "part",
+        "options": [
+          {
+            "selected": true,
+            "text": "libs",
+            "value": "libs"
+          },
+          {
+            "selected": false,
+            "text": "hover",
+            "value": "hover"
+          },
+          {
+            "selected": false,
+            "text": "dark",
+            "value": "dark"
+          }
+        ],
+        "query": "libs, hover, dark",
+        "type": "custom"
       }
     ]
   },
@@ -1303,6 +1520,6 @@
   "timezone": "",
   "title": "Examples",
   "uid": "O4tc_E6Gz",
-  "version": 2,
+  "version": 18,
   "weekStart": ""
 }
