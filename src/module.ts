@@ -5,7 +5,7 @@ import {
   ContentPartialsEditor,
   HelpersWithUrlEditor,
   ResourcesEditor,
-  StylesEditor,
+  StylesWithUrlEditor,
   TextEditor,
   TextPanel,
 } from './components';
@@ -188,13 +188,21 @@ export const plugin = new PanelPlugin<PanelOptions>(TextPanel)
         editor: ResourcesEditor,
         category: ['CSS Styles'],
       })
+      .addTextInput({
+        path: 'stylesRemoteUrl',
+        name: 'Remote URL',
+        description: 'URL to fetch CSS styles code from.',
+        defaultValue: DEFAULT_OPTIONS.stylesRemoteUrl,
+        category: ['CSS Styles'],
+        showIf: (config) => config.editors.includes(EditorType.STYLES) || config.styles !== DEFAULT_OPTIONS.styles,
+      })
       .addCustomEditor({
         id: 'styles',
         path: 'styles',
         name: 'Styles editor',
         description: 'Allows to add styles. Use & {} for parent style.',
         defaultValue: DEFAULT_OPTIONS.styles,
-        editor: StylesEditor,
+        editor: StylesWithUrlEditor,
         category: ['CSS Styles'],
         showIf: (config) => config.editors.includes(EditorType.STYLES) || config.styles !== DEFAULT_OPTIONS.styles,
       });

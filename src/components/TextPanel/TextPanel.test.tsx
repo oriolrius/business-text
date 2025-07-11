@@ -92,6 +92,7 @@ describe('Panel', () => {
       language: CodeLanguage.JAVASCRIPT,
     },
     styles: '',
+    stylesRemoteUrl: '',
     status: '',
     externalStyles: [],
     contentPartials: [],

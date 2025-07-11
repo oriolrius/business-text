@@ -89,6 +89,13 @@ export interface PanelOptions {
    */
   styles: string;
 
+  /**
+   * Styles Remote URL
+   *
+   * @type {string}
+   */
+  stylesRemoteUrl: string;
+
   /** Status
    *
    * @type {string};

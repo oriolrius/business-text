@@ -16,6 +16,7 @@ export const DEFAULT_OPTIONS: PanelOptions = {
   helpers: '',
   helpersRemoteUrl: '',
   afterRenderRemoteUrl: '',
+  stylesRemoteUrl: '',
   status: '',
   styles: '',
   wrap: true,
