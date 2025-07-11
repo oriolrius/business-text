@@ -1,7 +1,7 @@
 import { Field, FieldConfigProperty, FieldType, PanelPlugin } from '@grafana/data';
 
 import {
-  AfterRenderEditor,
+  AfterRenderWithUrlEditor,
   ContentPartialsEditor,
   HelpersWithUrlEditor,
   ResourcesEditor,
@@ -155,6 +155,14 @@ export const plugin = new PanelPlugin<PanelOptions>(TextPanel)
         category: ['JavaScript'],
         showIf: (config) => config.editors.includes(EditorType.HELPERS) || config.helpers !== DEFAULT_OPTIONS.helpers,
       })
+      .addTextInput({
+        path: 'afterRenderRemoteUrl',
+        name: 'Remote URL',
+        description: 'URL to fetch JavaScript after render code from.',
+        defaultValue: DEFAULT_OPTIONS.afterRenderRemoteUrl,
+        category: ['JavaScript'],
+        showIf: (config) => config.editors.includes(EditorType.AFTER_RENDER) || config.afterRender !== DEFAULT_OPTIONS.afterRender,
+      })
       .addCustomEditor({
         id: 'afterRender',
         path: 'afterRender',
@@ -162,7 +170,7 @@ export const plugin = new PanelPlugin<PanelOptions>(TextPanel)
         description:
           'Allows to execute code after content is ready. E.g. use element for drawing chart or event listeners.',
         defaultValue: DEFAULT_OPTIONS.afterRender,
-        editor: AfterRenderEditor,
+        editor: AfterRenderWithUrlEditor,
         category: ['JavaScript'],
         showIf: (config) =>
           config.editors.includes(EditorType.AFTER_RENDER) || config.afterRender !== DEFAULT_OPTIONS.afterRender,

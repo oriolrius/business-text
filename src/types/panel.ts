@@ -76,6 +76,13 @@ export interface PanelOptions {
   helpersRemoteUrl: string;
 
   /**
+   * After Render Remote URL
+   *
+   * @type {string}
+   */
+  afterRenderRemoteUrl: string;
+
+  /**
    * Styles
    *
    * @type {string}

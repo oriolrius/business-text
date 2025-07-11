@@ -97,6 +97,7 @@ describe('Panel', () => {
     contentPartials: [],
     wrap: false,
     afterRender: '',
+    afterRenderRemoteUrl: '',
   };
 
   /**
