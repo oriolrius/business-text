@@ -1,25 +1,22 @@
 import { StandardEditorProps } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
-import { Button, InlineField, InlineFieldRow, Input } from '@grafana/ui';
+import { Button, InlineField, InlineFieldRow } from '@grafana/ui';
 import React, { useCallback, useState } from 'react';
 
 import { EditorType } from '../../constants';
+import { PanelOptions } from '../../types';
 import { CustomEditor } from './CustomEditor';
 
 /**
  * Enhanced Helpers Editor with URL fetch functionality
  */
 export const HelpersWithUrlEditor: React.FC<StandardEditorProps> = (props) => {
-  const { onChange } = props;
+  const { onChange, context } = props;
   const [isLoading, setIsLoading] = useState(false);
-  const [remoteUrl, setRemoteUrl] = useState('');
-
-  /**
-   * Handle URL change
-   */
-  const handleUrlChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setRemoteUrl(event.currentTarget.value);
-  }, []);
+  
+  // Get the current helpersRemoteUrl from panel options
+  const options = context.options as PanelOptions;
+  const remoteUrl = options.helpersRemoteUrl || '';
 
   /**
    * Fetch content from remote URL
@@ -70,23 +67,20 @@ export const HelpersWithUrlEditor: React.FC<StandardEditorProps> = (props) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <InlineFieldRow>
-        <InlineField label="Remote URL" grow>
-          <Input
-            value={remoteUrl}
-            onChange={handleUrlChange}
-            placeholder="Enter URL to fetch JavaScript code"
-          />
-        </InlineField>
-        <Button
-          variant="secondary"
-          onClick={handleRefresh}
-          disabled={!remoteUrl.trim() || isLoading}
-          icon={isLoading ? undefined : 'sync'}
-        >
-          {isLoading ? 'Loading...' : 'Refresh'}
-        </Button>
-      </InlineFieldRow>
+      {remoteUrl && (
+        <InlineFieldRow>
+          <InlineField label="Fetch from Remote URL">
+            <Button
+              variant="secondary"
+              onClick={handleRefresh}
+              disabled={!remoteUrl.trim() || isLoading}
+              icon={isLoading ? undefined : 'sync'}
+            >
+              {isLoading ? 'Loading...' : 'Refresh'}
+            </Button>
+          </InlineField>
+        </InlineFieldRow>
+      )}
       
       <div style={{ flex: 1 }}>
         <CustomEditor

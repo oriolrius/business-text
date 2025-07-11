@@ -137,6 +137,14 @@ export const plugin = new PanelPlugin<PanelOptions>(TextPanel)
      * JavaScript
      */
     builder
+      .addTextInput({
+        path: 'helpersRemoteUrl',
+        name: 'Remote URL',
+        description: 'URL to fetch JavaScript helpers code from.',
+        defaultValue: DEFAULT_OPTIONS.helpersRemoteUrl,
+        category: ['JavaScript'],
+        showIf: (config) => config.editors.includes(EditorType.HELPERS) || config.helpers !== DEFAULT_OPTIONS.helpers,
+      })
       .addCustomEditor({
         id: 'helpers',
         path: 'helpers',
