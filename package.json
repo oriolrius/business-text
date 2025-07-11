@@ -13,7 +13,8 @@
   },
   "homepage": "https://github.com/oriolrius/grafana-business-text#readme",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "keywords": [
     "grafana",
