@@ -1,30 +1,66 @@
 import { InterpolateFunction } from '@grafana/data';
+import { getBackendSrv } from '@grafana/runtime';
 
 import { PartialItem, PartialItemConfig } from '../types';
 
 /**
- * Fetch content
+ * Fetch content using the plugin's backend endpoint (server-side)
  */
-export const fetchHtml = async (url: string, partialName: string): Promise<PartialItem> => {
-  let content = 'Unable to load template\n';
-
+export const fetchHtmlViaBackend = async (url: string, partialName: string): Promise<PartialItem> => {
   try {
-    const response = await fetch(url);
+    // Use the plugin's backend to fetch the content server-side
+    // This avoids CORS issues and doesn't require browser fetch
+    const response = await getBackendSrv().post('/api/plugins/volkovlabs-text-panel/resources/fetch-content', {
+      url: url,
+    });
 
-    if (response && response.ok) {
-      content = await response.text();
+    // Handle the response properly - the content should be directly in the response
+    if (response) {
+      let content: string;
+      
+      // Handle different response formats
+      if (typeof response === 'string') {
+        content = response;
+      } else if (response && typeof response === 'object') {
+        // If it's an object, try to extract content from common fields
+        const dataObj = response as any;
+        if (dataObj.content) {
+          content = dataObj.content;
+        } else if (dataObj.data) {
+          content = dataObj.data;
+        } else if (dataObj.text) {
+          content = dataObj.text;
+        } else if (dataObj.html) {
+          content = dataObj.html;
+        } else {
+          // The response itself might be the content
+          content = JSON.stringify(response, null, 2);
+        }
+      } else {
+        content = String(response);
+      }
+      
+      return {
+        name: partialName,
+        content,
+      };
+    } else {
+      throw new Error(`No content received from backend for ${url}`);
     }
-  } catch {}
-
-  return {
-    name: partialName,
-    content,
-  };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to fetch via plugin backend from ${url}: ${errorMessage}`);
+  }
 };
 
 /**
- * Fetch partials
+ * Fetch partials using only the plugin backend method
  */
 export const fetchAllPartials = async (items: PartialItemConfig[], replaceVariables: InterpolateFunction) => {
-  return await Promise.all(items.map((item) => fetchHtml(replaceVariables(item.url), item.name)));
+  return await Promise.all(items.map(async (item) => {
+    const url = replaceVariables(item.url);
+    
+    // Use only the plugin backend method (server-side, no CORS issues)
+    return await fetchHtmlViaBackend(url, item.name);
+  }));
 };

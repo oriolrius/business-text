@@ -49,6 +49,20 @@ export interface PartialItemConfig {
    * @type {string}
    */
   name: string;
+
+  /**
+   * Is Local Copy
+   *
+   * @type {boolean}
+   */
+  isLocalCopy?: boolean;
+
+  /**
+   * Local Content
+   *
+   * @type {string}
+   */
+  localContent?: string;
 }
 
 /**

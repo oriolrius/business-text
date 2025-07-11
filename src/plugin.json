@@ -1,5 +1,7 @@
 {
   "$schema": "https://github.com/grafana/grafana/raw/main/docs/sources/developers/plugins/plugin.schema.json",
+  "backend": true,
+  "executable": "gpx_business-text",
   "dependencies": {
     "grafanaDependency": ">=11.0.0",
     "plugins": []

@@ -10,7 +10,6 @@ import { AutosizeCodeEditor } from '@volkovlabs/components';
 /**
  * Monaco
  */
-import type * as monacoType from 'monaco-editor/esm/vs/editor/editor.api';
 import React, { useCallback, useMemo } from 'react';
 
 import {
@@ -52,7 +51,7 @@ export const CustomEditor: React.FC<Props> = ({ value, onChange, context, type =
    * Format On Mount
    */
   const onEditorMount = useCallback(
-    (editor: monacoType.editor.IStandaloneCodeEditor) => {
+    (editor: any, monaco: any) => {
       if (context.options.editor.format !== Format.AUTO || type === EditorType.STYLES) {
         return;
       }

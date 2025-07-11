@@ -1,6 +1,7 @@
 import { StandardEditorProps } from '@grafana/data';
-import { Button, Icon, InlineField, InlineFieldRow, Input, useStyles2 } from '@grafana/ui';
-import { Collapse } from '@volkovlabs/components';
+import { getAppEvents } from '@grafana/runtime';
+import { Button, Checkbox, Icon, InlineField, InlineFieldRow, Input, useStyles2 } from '@grafana/ui';
+import { AutosizeCodeEditor, Collapse } from '@volkovlabs/components';
 import React, { useCallback, useState } from 'react';
 import {
   DragDropContext,
@@ -14,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { TEST_IDS } from '../../constants';
 import { PanelOptions, PartialItemConfig } from '../../types';
-import { reorder } from '../../utils';
+import { fetchHtmlViaBackend, reorder } from '../../utils';
 import { getStyles } from './ContentPartialsEditor.styles';
 
 /**
@@ -47,8 +48,9 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
   const [items, setItems] = useState<PartialItemConfig[]>(value || []);
   const [newItemUrl, setNewItemUrl] = useState('');
   const [newItemName, setNewItemName] = useState('');
-
+  const [newItemIsLocalCopy, setNewItemIsLocalCopy] = useState(false);
   const [collapseState, setCollapseState] = useState<Record<string, boolean>>({});
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
 
   /**
    * Change Items
@@ -89,16 +91,6 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
   }, []);
 
   /**
-   * Add new item
-   */
-  const onAddNewItem = useCallback(() => {
-    setNewItemUrl('');
-    setNewItemName('');
-    onChangeItems(items.concat([{ id: uuidv4(), url: newItemUrl, name: newItemName }]));
-    onToggleItem(newItemName);
-  }, [items, newItemName, newItemUrl, onChangeItems, onToggleItem]);
-
-  /**
    * Change item
    */
   const onChangeItem = useCallback(
@@ -116,6 +108,161 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
       onChangeItems(items.filter((item) => item.id !== id));
     },
     [items, onChangeItems]
+  );
+
+  /**
+   * Show success notification
+   */
+  const showSuccessNotification = useCallback((message: string) => {
+    const appEvents = getAppEvents();
+    appEvents.publish({
+      type: 'alert-success',
+      payload: [message],
+    });
+  }, []);
+
+  /**
+   * Show error notification
+   */
+  const showErrorNotification = useCallback((message: string) => {
+    const appEvents = getAppEvents();
+    appEvents.publish({
+      type: 'alert-error', 
+      payload: [message],
+    });
+  }, []);
+
+  /**
+   * Fetch and store content locally
+   */
+  const fetchContentLocally = useCallback(
+    async (itemId: string) => {
+      // Always get the most current item from state
+      const item = items.find(i => i.id === itemId);
+      if (!item) {
+        showErrorNotification('Item not found');
+        return;
+      }
+
+      if (!item.url) {
+        showErrorNotification('URL is required to fetch content');
+        return;
+      }
+
+      setLoadingStates((prev) => ({ ...prev, [item.id]: true }));
+
+      // Debug: verificar l'estat del item
+      console.log('fetchContentLocally - item:', item);
+      console.log('fetchContentLocally - item.isLocalCopy:', item.isLocalCopy);
+
+      try {
+        let result: { name: string; content: string };
+        
+        console.log('Using backend method');
+        // Use the plugin's backend to fetch content (no CORS issues)
+        result = await fetchHtmlViaBackend(item.url, item.name);
+        
+        const updatedItem: PartialItemConfig = {
+          ...item,
+          isLocalCopy: true,
+          localContent: result.content,
+        };
+
+        onChangeItem(updatedItem);
+        showSuccessNotification(`Content downloaded successfully for "${item.name}" (via proxy)`);
+      } catch (error) {
+        // Capturem més detalls de l'error
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorStack = error instanceof Error ? error.stack : '';
+        
+        // Creem un contingut detallat amb informació de l'error
+        const errorDetails = `<!-- ERROR DOWNLOADING CONTENT -->
+<!-- URL: ${item.url} -->
+<!-- Method: Grafana Proxy -->
+<!-- Error: ${errorMessage} -->
+<!-- Time: ${new Date().toISOString()} -->
+<!-- Stack trace: 
+${errorStack}
+-->
+
+<div style="color: red; padding: 20px; border: 1px solid red; background: #ffe6e6;">
+  <h3>❌ Error downloading content</h3>
+  <p><strong>URL:</strong> ${item.url}</p>
+  <p><strong>Method:</strong> Grafana Proxy</p>
+  <p><strong>Error:</strong> ${errorMessage}</p>
+  <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+  
+  <details>
+    <summary>Technical Details</summary>
+    <pre>${errorStack || 'No stack trace available'}</pre>
+  </details>
+  
+  <p><em>💡 <strong>Proxy method failed.</strong> Check that the datasource "External Content Proxy" is configured correctly in Grafana and points to the correct base URL.</em></p>
+  
+  <p><em>You can try the "Refresh" button to retry the download.</em></p>
+</div>`;
+
+        // Guardem l'error com a contingut local perquè l'usuari pugui veure els detalls
+        const updatedItem: PartialItemConfig = {
+          ...item,
+          isLocalCopy: true,
+          localContent: errorDetails,
+        };
+
+        onChangeItem(updatedItem);
+        showErrorNotification(`Failed to download content for "${item.name}": ${errorMessage}`);
+      } finally {
+        setLoadingStates((prev) => ({ ...prev, [item.id]: false }));
+      }
+    },
+    [items, onChangeItem, showSuccessNotification, showErrorNotification]
+  );
+
+  /**
+   * Add new item
+   */
+  const addNewItem = useCallback(() => {
+    const newItem: PartialItemConfig = { 
+      id: uuidv4(), 
+      url: newItemUrl, 
+      name: newItemName,
+      isLocalCopy: newItemIsLocalCopy,
+    };
+    
+    setNewItemUrl('');
+    setNewItemName('');
+    setNewItemIsLocalCopy(false);
+    onChangeItems(items.concat([newItem]));
+    onToggleItem(newItemName);
+    
+    // If local copy is enabled, fetch content immediately
+    if (newItemIsLocalCopy) {
+      // Use setTimeout to ensure the item is added to state first
+      setTimeout(() => {
+        fetchContentLocally(newItem.id);
+      }, 100);
+    }
+  }, [items, newItemName, newItemUrl, newItemIsLocalCopy, onChangeItems, onToggleItem, fetchContentLocally]);
+
+  /**
+   * Toggle local copy mode
+   */
+  const onToggleLocalCopy = useCallback(
+    (item: PartialItemConfig, isChecked: boolean) => {
+      if (isChecked) {
+        // Switch to local copy mode and fetch content
+        fetchContentLocally(item.id);
+      } else {
+        // Switch back to remote mode
+        const updatedItem: PartialItemConfig = {
+          ...item,
+          isLocalCopy: false,
+          localContent: undefined,
+        };
+        onChangeItem(updatedItem);
+      }
+    },
+    [fetchContentLocally, onChangeItem]
   );
 
   return (
@@ -158,35 +305,106 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
                         isOpen={collapseState[id]}
                         onToggle={() => onToggleItem(id)}
                       >
-                        <InlineFieldRow>
-                          <InlineField grow label="URL">
-                            <Input
-                              value={url}
-                              onChange={(event) => {
-                                onChangeItem({
-                                  id,
-                                  url: event.currentTarget.value,
-                                  name,
-                                });
-                              }}
-                              data-testid={TEST_IDS.partialsEditor.fieldUrl}
-                            />
-                          </InlineField>
-                          <InlineField grow label="Name">
-                            <Input
-                              value={name}
-                              onChange={(event) => {
-                                onChangeItem({
-                                  id,
-                                  name: event.currentTarget.value,
-                                  url,
-                                });
-                              }}
-                              data-testid={TEST_IDS.partialsEditor.fieldName}
-                            />
-                          </InlineField>
-                        </InlineFieldRow>
+                        <div>
+                          <InlineFieldRow>
+                            <InlineField grow label="URL">
+                              <Input
+                                value={url}
+                                onChange={(event) => {
+                                  const currentItem = items.find(item => item.id === id);
+                                  onChangeItem({
+                                    id,
+                                    url: event.currentTarget.value,
+                                    name,
+                                    isLocalCopy: currentItem?.isLocalCopy,
+                                    localContent: currentItem?.localContent,
+                                  });
+                                }}
+                                data-testid={TEST_IDS.partialsEditor.fieldUrl}
+                              />
+                            </InlineField>
+                            <InlineField grow label="Name">
+                              <Input
+                                value={name}
+                                onChange={(event) => {
+                                  const currentItem = items.find(item => item.id === id);
+                                  onChangeItem({
+                                    id,
+                                    name: event.currentTarget.value,
+                                    url,
+                                    isLocalCopy: currentItem?.isLocalCopy,
+                                    localContent: currentItem?.localContent,
+                                  });
+                                }}
+                                data-testid={TEST_IDS.partialsEditor.fieldName}
+                              />
+                            </InlineField>
+                          </InlineFieldRow>
+                          
+                          <InlineFieldRow>
+                            <InlineField>
+                              <Checkbox
+                                checked={!!items.find(item => item.id === id)?.isLocalCopy}
+                                onChange={(event) => {
+                                  const currentItem = items.find(item => item.id === id);
+                                  if (currentItem) {
+                                    onToggleLocalCopy(currentItem, event.currentTarget.checked);
+                                  }
+                                }}
+                                data-testid={TEST_IDS.partialsEditor.checkboxLocalCopy}
+                              />
+                            </InlineField>
+                            <InlineField grow>
+                              <span style={{ marginLeft: '8px', lineHeight: '32px' }}>Local Copy</span>
+                            </InlineField>
+                            {items.find(item => item.id === id)?.isLocalCopy && (
+                              <InlineField>
+                                <Button
+                                  icon="sync"
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={() => {
+                                    const currentItem = items.find(item => item.id === id);
+                                    if (currentItem) {
+                                      fetchContentLocally(currentItem.id);
+                                    }
+                                  }}
+                                  disabled={loadingStates[id]}
+                                  data-testid={TEST_IDS.partialsEditor.buttonRefresh}
+                                >
+                                  {loadingStates[id] ? 'Downloading...' : 'Refresh'}
+                                </Button>
+                              </InlineField>
+                            )}
+                          </InlineFieldRow>
+                        </div>
                       </Collapse>
+                      
+                      {items.find(item => item.id === id)?.isLocalCopy && (
+                        <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+                          <InlineFieldRow>
+                            <InlineField label="Local Content" grow>
+                              <AutosizeCodeEditor
+                                value={items.find(item => item.id === id)?.localContent || ''}
+                                onChange={(value) => {
+                                  const currentItem = items.find(item => item.id === id);
+                                  if (currentItem) {
+                                    const updatedItem: PartialItemConfig = {
+                                      ...currentItem,
+                                      localContent: value,
+                                    };
+                                    onChangeItem(updatedItem);
+                                  }
+                                }}
+                                language="html"
+                                showLineNumbers={true}
+                                height="200px"
+                                data-testid={TEST_IDS.partialsEditor.fieldContent}
+                              />
+                            </InlineField>
+                          </InlineFieldRow>
+                        </div>
+                      )}
                     </div>
                   )}
                 </Draggable>
@@ -219,11 +437,24 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
           icon="plus"
           title="Add Partial"
           disabled={!newItemName || !newItemUrl}
-          onClick={onAddNewItem}
+          onClick={addNewItem}
           data-testid={TEST_IDS.partialsEditor.buttonAddNew}
         >
           Add
         </Button>
+      </InlineFieldRow>
+      
+      <InlineFieldRow>
+        <InlineField>
+          <Checkbox
+            checked={newItemIsLocalCopy}
+            onChange={(event) => setNewItemIsLocalCopy(event.currentTarget.checked)}
+            data-testid={TEST_IDS.partialsEditor.checkboxLocalCopy}
+          />
+        </InlineField>
+        <InlineField grow>
+          <span style={{ marginLeft: '8px', lineHeight: '32px' }}>Local Copy</span>
+        </InlineField>
       </InlineFieldRow>
     </>
   );

@@ -190,9 +190,13 @@ export const Text: React.FC<Props> = ({
       try {
         if (!frame?.length) {
           /**
-           * For empty frame
+           * For empty frame - use main content if partials are configured, otherwise use defaultContent
            */
-          const { html, unsubscribe } = await getHtml({}, options.defaultContent);
+          const contentToUse = options.contentPartials && options.contentPartials.length > 0 
+            ? options.content 
+            : options.defaultContent;
+          
+          const { html, unsubscribe } = await getHtml({}, contentToUse);
 
           setRows([
             {

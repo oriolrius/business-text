@@ -3,6 +3,12 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": false,
+    "skipLibCheck": true
   }
 }
