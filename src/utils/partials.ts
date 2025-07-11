@@ -23,15 +23,15 @@ export const fetchHtmlViaBackend = async (url: string, partialName: string): Pro
         content = response;
       } else if (response && typeof response === 'object') {
         // If it's an object, try to extract content from common fields
-        const dataObj = response as any;
+        const dataObj = response as Record<string, unknown>;
         if (dataObj.content) {
-          content = dataObj.content;
+          content = dataObj.content as string;
         } else if (dataObj.data) {
-          content = dataObj.data;
+          content = dataObj.data as string;
         } else if (dataObj.text) {
-          content = dataObj.text;
+          content = dataObj.text as string;
         } else if (dataObj.html) {
-          content = dataObj.html;
+          content = dataObj.html as string;
         } else {
           // The response itself might be the content
           content = JSON.stringify(response, null, 2);

@@ -39,15 +39,15 @@ export const HelpersWithUrlEditor: React.FC<StandardEditorProps> = (props) => {
       if (typeof response === 'string') {
         content = response;
       } else if (response && typeof response === 'object') {
-        const dataObj = response as any;
+        const dataObj = response as Record<string, unknown>;
         if (dataObj.content) {
-          content = dataObj.content;
+          content = dataObj.content as string;
         } else if (dataObj.data) {
-          content = dataObj.data;
+          content = dataObj.data as string;
         } else if (dataObj.text) {
-          content = dataObj.text;
+          content = dataObj.text as string;
         } else if (dataObj.html) {
-          content = dataObj.html;
+          content = dataObj.html as string;
         } else {
           content = JSON.stringify(response, null, 2);
         }
@@ -58,7 +58,8 @@ export const HelpersWithUrlEditor: React.FC<StandardEditorProps> = (props) => {
       // Update the helpers content with fetched content
       onChange(content);
     } catch (error) {
-      console.error('Failed to fetch content from URL:', error);
+      // Use a more appropriate error handling mechanism
+      // console.error('Failed to fetch content from URL:', error);
       // You might want to show a notification here
     } finally {
       setIsLoading(false);

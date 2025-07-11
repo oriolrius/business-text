@@ -22,6 +22,20 @@ import {
 } from '../../constants';
 
 /**
+ * Monaco Editor Action interface - minimal typing for the formatDocument functionality
+ */
+interface MonacoEditorAction {
+  run(): void;
+}
+
+/**
+ * Monaco Editor interface - minimal typing for what we actually use
+ */
+interface MonacoEditor {
+  getAction(actionId: string): MonacoEditorAction;
+}
+
+/**
  * Properties
  */
 interface Props extends StandardEditorProps {
@@ -51,13 +65,13 @@ export const CustomEditor: React.FC<Props> = ({ value, onChange, context, type =
    * Format On Mount
    */
   const onEditorMount = useCallback(
-    (editor: any, monaco: any) => {
+    (editor: unknown) => {
       if (context.options.editor.format !== Format.AUTO || type === EditorType.STYLES) {
         return;
       }
 
       setTimeout(() => {
-        editor.getAction('editor.action.formatDocument').run();
+        (editor as MonacoEditor).getAction('editor.action.formatDocument').run();
       }, 100);
     },
     [context.options.editor.format, type]

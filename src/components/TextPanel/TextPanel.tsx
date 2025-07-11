@@ -1,7 +1,7 @@
 import { css, cx } from '@emotion/css';
 import { PanelProps, SelectableValue } from '@grafana/data';
 import { RefreshEvent } from '@grafana/runtime';
-import { Select, useStyles2, useTheme2 } from '@grafana/ui';
+import { Combobox, useStyles2, useTheme2 } from '@grafana/ui';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TEST_IDS } from '../../constants';
@@ -155,7 +155,7 @@ export const TextPanel: React.FC<Props> = ({
 
       {options.renderMode !== RenderMode.DATA && data.series.length > 1 && (
         <div className={styles.frameSelect}>
-          <Select
+          <Combobox
             onChange={onChangeFrame}
             value={frame?.refId}
             options={selectableFrames}
