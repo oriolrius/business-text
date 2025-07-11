@@ -3,7 +3,7 @@ import { Field, FieldConfigProperty, FieldType, PanelPlugin } from '@grafana/dat
 import {
   AfterRenderEditor,
   ContentPartialsEditor,
-  HelpersEditor,
+  HelpersWithUrlEditor,
   ResourcesEditor,
   StylesEditor,
   TextEditor,
@@ -143,7 +143,7 @@ export const plugin = new PanelPlugin<PanelOptions>(TextPanel)
         name: 'Before Content Rendering',
         description: 'Allows to execute code before content rendering. E.g. add Handlebars Helpers.',
         defaultValue: DEFAULT_OPTIONS.helpers,
-        editor: HelpersEditor,
+        editor: HelpersWithUrlEditor,
         category: ['JavaScript'],
         showIf: (config) => config.editors.includes(EditorType.HELPERS) || config.helpers !== DEFAULT_OPTIONS.helpers,
       })

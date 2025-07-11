@@ -86,6 +86,7 @@ describe('Panel', () => {
     renderMode: RenderMode.ALL_ROWS,
     editors: [],
     helpers: '',
+    helpersRemoteUrl: '',
     editor: {
       format: Format.AUTO,
       language: CodeLanguage.JAVASCRIPT,

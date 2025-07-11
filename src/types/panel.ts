@@ -69,6 +69,13 @@ export interface PanelOptions {
   helpers: string;
 
   /**
+   * Helpers Remote URL
+   *
+   * @type {string}
+   */
+  helpersRemoteUrl: string;
+
+  /**
    * Styles
    *
    * @type {string}

@@ -14,6 +14,7 @@ export const DEFAULT_OPTIONS: PanelOptions = {
   externalStyles: [],
   contentPartials: [],
   helpers: '',
+  helpersRemoteUrl: '',
   status: '',
   styles: '',
   wrap: true,
