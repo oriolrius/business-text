@@ -305,6 +305,7 @@ export const Text: React.FC<Props> = ({
     frame?.length,
     getHtml,
     options.content,
+    options.contentPartials,
     options.defaultContent,
     options.renderMode,
     options.status,

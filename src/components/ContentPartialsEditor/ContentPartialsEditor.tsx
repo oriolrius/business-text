@@ -1,8 +1,8 @@
-import { StandardEditorProps } from '@grafana/data';
+import { AlertErrorPayload, AlertPayload, AppEvents, StandardEditorProps } from '@grafana/data';
 import { getAppEvents } from '@grafana/runtime';
 import { Button, Checkbox, Icon, InlineField, InlineFieldRow, Input, useStyles2 } from '@grafana/ui';
 import { AutosizeCodeEditor, Collapse } from '@volkovlabs/components';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -116,8 +116,8 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
   const showSuccessNotification = useCallback((message: string) => {
     const appEvents = getAppEvents();
     appEvents.publish({
-      type: 'alert-success',
-      payload: [message],
+      type: AppEvents.alertSuccess.name,
+      payload: [message] as AlertPayload,
     });
   }, []);
 
@@ -127,8 +127,8 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
   const showErrorNotification = useCallback((message: string) => {
     const appEvents = getAppEvents();
     appEvents.publish({
-      type: 'alert-error', 
-      payload: [message],
+      type: AppEvents.alertError.name, 
+      payload: [message] as AlertErrorPayload,
     });
   }, []);
 
@@ -151,16 +151,8 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
 
       setLoadingStates((prev) => ({ ...prev, [item.id]: true }));
 
-      // Debug: verificar l'estat del item
-      console.log('fetchContentLocally - item:', item);
-      console.log('fetchContentLocally - item.isLocalCopy:', item.isLocalCopy);
-
       try {
-        let result: { name: string; content: string };
-        
-        console.log('Using backend method');
-        // Use the plugin's backend to fetch content (no CORS issues)
-        result = await fetchHtmlViaBackend(item.url, item.name);
+        const result: { name: string; content: string } = await fetchHtmlViaBackend(item.url, item.name);
         
         const updatedItem: PartialItemConfig = {
           ...item,
@@ -264,6 +256,25 @@ ${errorStack}
     },
     [fetchContentLocally, onChangeItem]
   );
+
+  /**
+   * Auto-fetch missing local content on mount and when items change
+   */
+  useEffect(() => {
+    const itemsNeedingContent = items.filter(
+      item => item.isLocalCopy && !item.localContent && item.url && !loadingStates[item.id]
+    );
+    
+    if (itemsNeedingContent.length > 0) {
+      // Fetch content for items that need it
+      itemsNeedingContent.forEach(item => {
+        if (!loadingStates[item.id]) {
+          fetchContentLocally(item.id);
+        }
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.length, JSON.stringify(items.map(i => ({id: i.id, isLocalCopy: i.isLocalCopy, hasContent: !!i.localContent, url: i.url})))]);
 
   return (
     <>

@@ -54,13 +54,21 @@ export const fetchHtmlViaBackend = async (url: string, partialName: string): Pro
 };
 
 /**
- * Fetch partials using only the plugin backend method
+ * Fetch partials using local content when available, otherwise backend method
  */
 export const fetchAllPartials = async (items: PartialItemConfig[], replaceVariables: InterpolateFunction) => {
   return await Promise.all(items.map(async (item) => {
+    // If local copy is enabled and content is available, use it directly
+    if (item.isLocalCopy && item.localContent) {
+      return {
+        name: item.name,
+        content: item.localContent,
+      };
+    }
+    
     const url = replaceVariables(item.url);
     
-    // Use only the plugin backend method (server-side, no CORS issues)
+    // Use the plugin backend method (server-side, no CORS issues)
     return await fetchHtmlViaBackend(url, item.name);
   }));
 };
