@@ -10,7 +10,7 @@ services:
       - GF_INSTALL_PLUGINS=volkovlabs-rss-datasource,marcusolsson-static-datasource,yesoreyeram-infinity-datasource
     volumes:
       - ./dist:/var/lib/grafana/plugins/volkovlabs-text-panel
-      - ./provisioning:/etc/grafana/provisioning
+      - ./static/provisioning:/etc/grafana/provisioning
     profiles:
       - dev
 
@@ -24,7 +24,7 @@ services:
       - GF_INSTALL_PLUGINS=marcusolsson-static-datasource,volkovlabs-rss-datasource,yesoreyeram-infinity-datasource
     volumes:
       - ./dist:/var/lib/grafana/plugins/volkovlabs-text-panel
-      - ./provisioning:/etc/grafana/provisioning
+      - ./static/provisioning:/etc/grafana/provisioning
     profiles:
       - main
 
@@ -38,7 +38,7 @@ services:
       - GF_INSTALL_PLUGINS=volkovlabs-rss-datasource,marcusolsson-static-datasource,yesoreyeram-infinity-datasource
     volumes:
       - ./dist:/var/lib/grafana/plugins/volkovlabs-text-panel
-      - ./provisioning:/etc/grafana/provisioning
+      - ./static/provisioning:/etc/grafana/provisioning
     profiles:
       - dependency
 
@@ -49,8 +49,7 @@ services:
     environment:
       - GRAFANA_URL=http://127.0.0.1:3000
     volumes:
-      - ./test:/app/test
-      - ./playwright-report:/app/playwright-report
-    network_mode: host
+      - ./test:/home/pwuser/test
+      - ./dist:/home/pwuser/dist
     profiles:
       - e2e

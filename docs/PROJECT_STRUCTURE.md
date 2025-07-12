@@ -147,9 +147,16 @@ Project documentation:
 
 - **`build.sh`** - Main build script for CI/CD
 
-### Docker Configuration (`docker/`)
+### Docker Configuration
 
-- **`docker-compose.yml`** - Docker Compose configuration for development
+- **`docker-compose.yml`** - Docker Compose configuration for development (located at project root)
+
+**Note**: The docker-compose.yml file is located at the project root and includes multiple profiles for different development scenarios:
+
+- `dev` profile: Uses volkovlabs/app image for development
+- `main` profile: Uses latest Grafana main branch  
+- `dependency` profile: Uses specific Grafana version for compatibility testing
+- `e2e` profile: For end-to-end testing with Playwright
 
 ### Static Assets (`static/`)
 
