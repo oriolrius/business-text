@@ -1,0 +1,27 @@
+{
+  "extends": "@grafana/tsconfig",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2020",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "typeRoots": ["../src/@types", "node_modules/@types"]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.js",
+    "../webpack.config.ts",
+    "../src/@types/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

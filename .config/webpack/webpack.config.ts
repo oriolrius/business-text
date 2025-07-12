@@ -187,6 +187,12 @@ const config = async (env): Promise<Configuration> => {
       new ESLintPlugin({
         extensions: ['.ts', '.tsx'],
         lintDirtyModulesOnly: Boolean(env.development), // don't lint on start, only lint changed files
+        baseConfig: {
+          parserOptions: {
+            project: path.join(process.cwd(), 'tsconfig.json'),
+            tsconfigRootDir: process.cwd(),
+          },
+        },
       }),
       ...(env.development ? [new LiveReloadPlugin()] : []),
     ],

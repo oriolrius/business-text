@@ -1,14 +1,33 @@
 {
-  "extends": "./.config/tsconfig.json",
+  "extends": "@grafana/tsconfig",
   "compilerOptions": {
-    "paths": {
-      "@/*": ["*"]
-    },
-    "jsx": "react-jsx",
+    "module": "CommonJS",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "jsx": "react-jsx",
     "moduleResolution": "node",
-    "strict": false,
-    "skipLibCheck": true
-  }
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["jest", "@testing-library/jest-dom", "node"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "webpack.config.js",
+    "jest-setup.js",
+    "jest.config.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "static/coverage",
+    "backend"
+  ]
 }

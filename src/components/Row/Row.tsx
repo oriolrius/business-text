@@ -12,9 +12,9 @@ import { TimeZone } from '@grafana/schema';
 import { useTheme2 } from '@grafana/ui';
 import { useDashboardRefresh } from '@volkovlabs/components';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { RowItem } from 'types';
 
 import { TEST_IDS } from '../../constants';
+import { RowItem } from '../../types';
 import { afterRenderCodeParameters, createExecutionCode } from '../../utils';
 
 /**
