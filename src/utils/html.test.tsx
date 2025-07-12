@@ -2,8 +2,10 @@ import { textUtil } from '@grafana/data';
 import { config } from '@grafana/runtime';
 import { render, screen } from '@testing-library/react';
 import Handlebars from 'handlebars';
-import { fetchAllPartials } from './partials';
+import React from 'react';
+
 import { generateHtml } from './html';
+import { fetchAllPartials } from './partials';
 
 /**
  * Mock handlebars

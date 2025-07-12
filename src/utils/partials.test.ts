@@ -4,6 +4,7 @@ import { fetchAllPartials } from './partials';
 jest.mock('@grafana/runtime', () => ({
   getBackendSrv: jest.fn(() => ({
     get: jest.fn(),
+    post: jest.fn(),
     datasourceRequest: jest.fn(),
   })),
 }));
@@ -23,33 +24,23 @@ describe('fetchAllPartials', () => {
 
     // Mock the backend service
     const mockGetBackendSrv = require('@grafana/runtime').getBackendSrv;
-    const mockGet = jest.fn().mockImplementation((url: string) => {
-      if (url === '/api/datasources') {
-        return Promise.resolve([
-          {
-            name: 'External Content Proxy',
-            uid: 'test-uid',
-            url: 'https://joor.net'
-          }
-        ]);
-      }
-      // For proxy requests, return the test content
-      return Promise.resolve('<p>test content</p>');
-    });
+    const mockPost = jest.fn().mockResolvedValue('<p>test content</p>');
 
     mockGetBackendSrv.mockReturnValue({
-      get: mockGet,
+      get: jest.fn(),
+      post: mockPost,
       datasourceRequest: jest.fn(),
     });
 
     const result = await fetchAllPartials([item1, item2], replaceVariables);
 
-    // Should call datasource API to get datasource info
-    expect(mockGet).toHaveBeenCalledWith('/api/datasources');
-    
-    // Should make proxy requests for both items using GET endpoint
-    expect(mockGet).toHaveBeenCalledWith('/api/datasources/proxy/uid/test-uid/template1.html');
-    expect(mockGet).toHaveBeenCalledWith('/api/datasources/proxy/uid/test-uid/template2.html');
+    // Should make POST requests to the plugin backend for both items
+    expect(mockPost).toHaveBeenCalledWith('/api/plugins/volkovlabs-text-panel/resources/fetch-content', {
+      url: 'https://joor.net/template1.html',
+    });
+    expect(mockPost).toHaveBeenCalledWith('/api/plugins/volkovlabs-text-panel/resources/fetch-content', {
+      url: 'https://joor.net/template2.html',
+    });
     
     expect(result).toEqual([
       { name: item1.name, content: '<p>test content</p>' },
@@ -63,13 +54,17 @@ describe('fetchAllPartials', () => {
 
     // Mock the backend service to fail
     const mockGetBackendSrv = require('@grafana/runtime').getBackendSrv;
-    const mockGet = jest.fn().mockRejectedValue(new Error('Datasource not found'));
+    const mockPost = jest.fn().mockRejectedValue(new Error('Backend fetch failed'));
 
     mockGetBackendSrv.mockReturnValue({
-      get: mockGet,
+      get: jest.fn(),
+      post: mockPost,
+      datasourceRequest: jest.fn(),
     });
 
-    await expect(fetchAllPartials([item], replaceVariables)).rejects.toThrow();
-    expect(mockGet).toHaveBeenCalledWith('/api/datasources');
+    await expect(fetchAllPartials([item], replaceVariables)).rejects.toThrow('Failed to fetch via plugin backend from https://joor.net/template.html: Backend fetch failed');
+    expect(mockPost).toHaveBeenCalledWith('/api/plugins/volkovlabs-text-panel/resources/fetch-content', {
+      url: 'https://joor.net/template.html',
+    });
   });
 });

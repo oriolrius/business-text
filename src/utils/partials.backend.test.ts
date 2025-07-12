@@ -35,10 +35,10 @@ describe('fetchAllPartials', () => {
     const result = await fetchAllPartials([item1, item2], replaceVariables);
 
     // Should make backend POST requests for both items
-    expect(mockPost).toHaveBeenCalledWith('/api/plugins/business-text/resources/fetch-content', {
+    expect(mockPost).toHaveBeenCalledWith('/api/plugins/volkovlabs-text-panel/resources/fetch-content', {
       url: 'https://joor.net/template1.html'
     });
-    expect(mockPost).toHaveBeenCalledWith('/api/plugins/business-text/resources/fetch-content', {
+    expect(mockPost).toHaveBeenCalledWith('/api/plugins/volkovlabs-text-panel/resources/fetch-content', {
       url: 'https://joor.net/template2.html'
     });
     
@@ -63,7 +63,7 @@ describe('fetchAllPartials', () => {
     });
 
     await expect(fetchAllPartials([item], replaceVariables)).rejects.toThrow();
-    expect(mockPost).toHaveBeenCalledWith('/api/plugins/business-text/resources/fetch-content', {
+    expect(mockPost).toHaveBeenCalledWith('/api/plugins/volkovlabs-text-panel/resources/fetch-content', {
       url: 'https://joor.net/template.html'
     });
   });

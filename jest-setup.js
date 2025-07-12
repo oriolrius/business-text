@@ -24,6 +24,23 @@ beforeEach(() => {
 global.ResizeObserver = ResizeObserver;
 
 /**
+ * Mock Canvas API for Grafana UI components
+ */
+HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
+  measureText: jest.fn(() => ({ width: 100 })),
+  font: '',
+}));
+
+/**
  * Assign Text Decoder and Encoder which are required in @grafana/ui
  */
 Object.assign(global, { TextDecoder, TextEncoder });
+
+/**
+ * Mock IntersectionObserver which is not available in jsdom
+ */
+global.IntersectionObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
