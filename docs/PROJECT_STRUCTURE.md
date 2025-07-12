@@ -115,7 +115,7 @@ All build and development configuration files:
 
 #### Jest
 
-- **`jest.config.ts`** - Jest test runner configuration
+- **`jest/`** - Jest configuration directory with mocks and utilities
 
 #### TypeScript
 
@@ -202,7 +202,7 @@ All development commands are defined in `package.json` scripts:
 
 - **TypeScript**: Root `tsconfig.json` extends `.config/tsconfig.json`
 - **Webpack**: Root `webpack.config.js` extends `.config/webpack/webpack.config.ts` with custom Handlebars configuration
-- **Jest**: `jest.config.js` references `.config/jest.config.ts`
+- **Jest**: `jest.config.js` references Jest configuration with mocks in `.config/jest/`
 - **ESLint**: `.eslintrc` (references `.config/.eslintrc`)
 - **Prettier**: `.prettierrc.js` (references `.config/.prettierrc.js`)
 
