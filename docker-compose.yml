@@ -11,8 +11,15 @@ services:
     volumes:
       - ./dist:/var/lib/grafana/plugins/volkovlabs-text-panel
       - ./static/provisioning:/etc/grafana/provisioning
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health && curl -s http://localhost:3000/login | grep -q 'Grafana' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 120s
     profiles:
       - dev
+      - e2e
 
   grafana-main:
     image: grafana/grafana:main
@@ -46,8 +53,11 @@ services:
     build:
       context: .
       dockerfile: test/Dockerfile
+    depends_on:
+      grafana:
+        condition: service_healthy
     environment:
-      - GRAFANA_URL=http://127.0.0.1:3000
+      - GRAFANA_URL=http://grafana:3000
     volumes:
       - ./test:/home/pwuser/test
       - ./dist:/home/pwuser/dist

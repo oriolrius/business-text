@@ -1,3 +1,4 @@
+import React from 'react';
 import { getTemplateSrv } from '@grafana/runtime';
 import { CodeEditorSuggestionItemKind } from '@grafana/ui';
 import { AutosizeCodeEditor } from '@volkovlabs/components';
