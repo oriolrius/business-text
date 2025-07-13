@@ -51,6 +51,7 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
   const [newItemIsLocalCopy, setNewItemIsLocalCopy] = useState(false);
   const [collapseState, setCollapseState] = useState<Record<string, boolean>>({});
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+  const [editorContent, setEditorContent] = useState<Record<string, string>>({});
 
   /**
    * Change Items
@@ -136,7 +137,7 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
    * Fetch and store content locally
    */
   const fetchContentLocally = useCallback(
-    async (itemId: string) => {
+    async (itemId: string, preserveEditorContent = false) => {
       // Always get the most current item from state
       const item = items.find(i => i.id === itemId);
       if (!item) {
@@ -154,13 +155,23 @@ export const ContentPartialsEditor: React.FC<Props> = ({ value, onChange }) => {
       try {
         const result: { name: string; content: string } = await fetchHtmlViaBackend(item.url, item.name);
         
+        // Check if we should preserve the current editor content
+        const currentEditorContent = editorContent[item.id];
+        const hasUnsavedChanges = currentEditorContent && currentEditorContent !== item.localContent;
+        
         const updatedItem: PartialItemConfig = {
           ...item,
           isLocalCopy: true,
-          localContent: result.content,
+          localContent: (preserveEditorContent && hasUnsavedChanges) ? currentEditorContent : result.content,
         };
 
         onChangeItem(updatedItem);
+        
+        // Update the editor content state only if not preserving or no unsaved changes
+        if (!preserveEditorContent || !hasUnsavedChanges) {
+          setEditorContent(prev => ({ ...prev, [item.id]: result.content }));
+        }
+        
         showSuccessNotification(`Content downloaded successfully for "${item.name}" (via proxy)`);
       } catch (error) {
         // Capturem més detalls de l'error
@@ -202,12 +213,13 @@ ${errorStack}
         };
 
         onChangeItem(updatedItem);
+        setEditorContent(prev => ({ ...prev, [item.id]: errorDetails }));
         showErrorNotification(`Failed to download content for "${item.name}": ${errorMessage}`);
       } finally {
         setLoadingStates((prev) => ({ ...prev, [item.id]: false }));
       }
     },
-    [items, onChangeItem, showSuccessNotification, showErrorNotification]
+    [items, editorContent, onChangeItem, showSuccessNotification, showErrorNotification]
   );
 
   /**
@@ -256,6 +268,22 @@ ${errorStack}
     },
     [fetchContentLocally, onChangeItem]
   );
+
+  /**
+   * Initialize editor content state when items change
+   */
+  useEffect(() => {
+    const newEditorContent: Record<string, string> = {};
+    items.forEach(item => {
+      if (item.isLocalCopy && item.localContent && !editorContent[item.id]) {
+        newEditorContent[item.id] = item.localContent;
+      }
+    });
+    
+    if (Object.keys(newEditorContent).length > 0) {
+      setEditorContent(prev => ({ ...prev, ...newEditorContent }));
+    }
+  }, [items, editorContent]);
 
   /**
    * Auto-fetch missing local content on mount and when items change
@@ -377,7 +405,7 @@ ${errorStack}
                                   onClick={() => {
                                     const currentItem = items.find(item => item.id === id);
                                     if (currentItem) {
-                                      fetchContentLocally(currentItem.id);
+                                      fetchContentLocally(currentItem.id, true);
                                     }
                                   }}
                                   disabled={loadingStates[id]}
@@ -396,10 +424,12 @@ ${errorStack}
                           <InlineFieldRow>
                             <InlineField label="Local Content" grow>
                               <AutosizeCodeEditor
-                                value={items.find(item => item.id === id)?.localContent || ''}
+                                value={editorContent[id] ?? items.find(item => item.id === id)?.localContent ?? ''}
                                 onChange={(value) => {
                                   const currentItem = items.find(item => item.id === id);
                                   if (currentItem) {
+                                    // Update both editor content state and item state
+                                    setEditorContent(prev => ({ ...prev, [id]: value }));
                                     const updatedItem: PartialItemConfig = {
                                       ...currentItem,
                                       localContent: value,

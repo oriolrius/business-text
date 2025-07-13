@@ -2,12 +2,12 @@ apiVersion: 1
 
 datasources:
   - name: External Content Proxy
-    type: http
+    type: yesoreyeram-infinity-datasource
     access: proxy
     url: https://joor.net
     isDefault: false
     jsonData:
-      httpMethod: GET
-      timeout: 30
-      keepCookies: []
+      auth_method: none
+      allowed_hosts: []
+      timeout_in_seconds: 30
     secureJsonData: {}
