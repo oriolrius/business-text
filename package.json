@@ -1,6 +1,6 @@
 {
   "name": "@oriolrius/grafana-business-text",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Data-driven text with Markdown and Handlebars support for Grafana",
   "author": "Oriol Rius",
   "license": "Apache-2.0",
@@ -117,6 +117,7 @@
     "test:e2e": "npx playwright test",
     "test:e2e:dev": "npx playwright test --ui",
     "test:e2e:docker": "docker compose --profile e2e up --exit-code-from test",
+    "test:security": "npx playwright test test/complete-security.spec.ts --config=playwright-security.config.ts",
     "test:sqlite": "node scripts/test-sqlite-access.js",
     "upgrade": "npm upgrade --save",
     "release": "npm version patch && npm publish",
