@@ -1,0 +1,133 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 10,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "volkovlabs-rss-datasource",
+        "uid": "rZAdZdf7a"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "afterRender": "",
+        "afterRenderRemoteUrl": "",
+        "content": "# HTTPBin.org Test\n\n```json\n{{>content}}\n```\n",
+        "contentPartials": [
+          {
+            "id": "98a53afc-5f9f-493f-a973-3ef8d92d74ec",
+            "isLocalCopy": true,
+            "localContent": "{\n  \"args\": {}, \n  \"headers\": {\n    \"Accept\": \"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\", \n    \"Accept-Encoding\": \"gzip\", \n    \"Host\": \"httpbin.org\", \n    \"User-Agent\": \"Grafana Business Text Plugin\", \n    \"X-Amzn-Trace-Id\": \"Root=1-68743b20-07040b4e200b46c605194760\"\n  }, \n  \"origin\": \"185.160.171.64\", \n  \"url\": \"https://httpbin.org/get\"\n}\n",
+            "name": "content",
+            "url": "https://httpbin.org"
+          }
+        ],
+        "dataSource": {
+          "enableDataSourceQueries": false,
+          "queryTimeout": 30000,
+          "showQueryErrors": true
+        },
+        "defaultContent": "Loading...",
+        "editor": {
+          "format": "auto",
+          "language": "markdown"
+        },
+        "editors": [
+          "markdown"
+        ],
+        "eventsOnMount": false,
+        "externalStyles": [],
+        "helpers": "",
+        "helpersRemoteUrl": "",
+        "renderMode": "data",
+        "styles": "",
+        "stylesRemoteUrl": "",
+        "wrap": true
+      },
+      "pluginVersion": "6.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "marcusolsson-static-datasource",
+            "uid": "static"
+          },
+          "feedType": "all",
+          "frame": {
+            "fields": [
+              {
+                "name": "content",
+                "type": "string",
+                "values": [
+                  "test"
+                ]
+              }
+            ]
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "HTTPBin.org via Proxy",
+      "type": "volkovlabs-text-panel"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 41,
+  "tags": [
+    "httpbin",
+    "proxy"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "HTTPBin Simple Test",
+  "uid": "httpbin-simple-test",
+  "version": 1
+}
