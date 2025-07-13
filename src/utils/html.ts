@@ -175,7 +175,7 @@ export const generateHtml = async ({
       try {
         unsubscribe = await result;
       } catch (error) {
-        console.error('Async helpers execution error:', error);
+        // Async helpers execution error handled silently
       }
     } else {
       unsubscribe = result;

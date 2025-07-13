@@ -86,7 +86,12 @@ export interface DataSourceContext {
     /**
      * Format query response for easier consumption
      */
-    formatResults: (response: DataQueryResponse) => any;
+    formatResults: (response: DataQueryResponse) => {
+      series: any[];
+      rows: Array<Record<string, any>>;
+      fields: string[];
+      raw: DataQueryResponse;
+    };
 
     /**
      * Extract values from a specific field
@@ -96,7 +101,7 @@ export interface DataSourceContext {
     /**
      * Convert response to simple object array
      */
-    toObjects: (response: DataQueryResponse) => Record<string, any>[];
+    toObjects: (response: DataQueryResponse) => Array<Record<string, any>>;
   };
 }
 

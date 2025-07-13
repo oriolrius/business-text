@@ -1,8 +1,8 @@
 import { DataFrame, PanelData } from '@grafana/data';
 
+import { DataSourcePanelOptions } from './dataSource';
 import { EditorOptions } from './editor';
 import { PartialItemConfig, Resource } from './resource';
-import { DataSourcePanelOptions } from './dataSource';
 
 /**
  * Editor Types
@@ -153,7 +153,7 @@ export interface RowItem {
   /**
    * Data
    *
-   * @type {object | object[]}
+   * @type {object | Array<object>}
    */
   data: object | object[];
 

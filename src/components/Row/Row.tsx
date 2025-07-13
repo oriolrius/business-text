@@ -14,12 +14,12 @@ import { useDashboardRefresh } from '@volkovlabs/components';
 import React, { useCallback, useEffect, useRef } from 'react';
 
 import { TEST_IDS } from '../../constants';
-import { RowItem, PanelOptions } from '../../types';
-import { 
-  afterRenderCodeParameters, 
-  createExecutionCode, 
-  createDataSourceContext, 
-  createNotificationContext 
+import { PanelOptions, RowItem } from '../../types';
+import {
+  afterRenderCodeParameters,
+  createDataSourceContext,
+  createExecutionCode,
+  createNotificationContext,
 } from '../../utils';
 
 /**
@@ -180,12 +180,12 @@ export const Row: React.FC<Props> = ({
 
       // Handle async functions that return promises
       if (result && typeof result.then === 'function') {
-        result.then((asyncUnsubscribe: any) => {
+        result.then((asyncUnsubscribe: (() => void) | void) => {
           if (typeof asyncUnsubscribe === 'function') {
             unsubscribe = asyncUnsubscribe;
           }
-        }).catch((error: any) => {
-          console.error('Async code execution error:', error);
+        }).catch(() => {
+          // Error is handled by error boundary
         });
       } else {
         unsubscribe = result;

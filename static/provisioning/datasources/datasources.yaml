@@ -37,3 +37,13 @@ datasources:
     jsonData:
       global_queries: []
     readOnly: false
+  - name: SQLite Demo
+    type: frser-sqlite-datasource
+    uid: sqlite-demo
+    access: proxy
+    url: file:///var/lib/grafana/tmp/devices.db
+    isDefault: false
+    editable: true
+    jsonData:
+      path: /var/lib/grafana/tmp/devices.db
+    secureJsonData: {}

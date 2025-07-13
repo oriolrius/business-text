@@ -1,0 +1,129 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "type": "volkovlabs-text-panel",
+      "title": "SQLite Connection Test",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "h": 14,
+        "w": 24
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "pluginVersion": "6.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "marcusolsson-static-datasource",
+            "uid": "U0HP2Rv4z"
+          },
+          "frame": {
+            "fields": [
+              {
+                "config": {},
+                "name": "asd",
+                "type": "string",
+                "values": [
+                  "das"
+                ]
+              }
+            ],
+            "meta": {}
+          },
+          "refId": "A"
+        }
+      ],
+      "datasource": {
+        "type": "marcusolsson-static-datasource",
+        "uid": "U0HP2Rv4z"
+      },
+      "options": {
+        "renderMode": "data",
+        "editors": [
+          "default",
+          "helpers",
+          "afterRender",
+          "styles"
+        ],
+        "editor": {
+          "language": "markdown",
+          "format": "auto"
+        },
+        "wrap": true,
+        "contentPartials": [],
+        "content": "<div id=\"content\">SQLite Test Panel</div>",
+        "defaultContent": "The query didn't return any results.",
+        "helpersRemoteUrl": "",
+        "helpers": "",
+        "afterRenderRemoteUrl": "",
+        "afterRender": "// Simple SQLite test using context.dataSource.sql()\r\nconst sqliteDataSourceUid = 'sqlite-demo'; // Update with your datasource UID\r\n\r\nasync function testSQLite() {\r\n  try {\r\n    // Execute query\r\n    const result = await context.dataSource.sql(sqliteDataSourceUid, 'SELECT * FROM devices LIMIT 5');\r\n\r\n    // Convert to objects\r\n    const rows = context.dataSource.utils.toObjects(result);\r\n\r\n    // Display results\r\n    document.getElementById('content').innerHTML = `\r\n      <h3>✅ SQLite Connected! Found ${rows.length} devices</h3>\r\n      <pre>${JSON.stringify(rows, null, 2)}</pre>\r\n    `;\r\n\r\n  } catch (error) {\r\n    document.getElementById('content').innerHTML = `\r\n      <h3>❌ Error: ${error.message}</h3>\r\n    `;\r\n  }\r\n}\r\n\r\ntestSQLite();",
+        "externalStyles": [],
+        "stylesRemoteUrl": "",
+        "styles": "",
+        "dataSource": {
+          "enableDataSourceQueries": true,
+          "queryTimeout": 30000,
+          "showQueryErrors": true
+        }
+      }
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [
+    "sqlite",
+    "demo"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "SQLite Demo Dashboard",
+  "uid": "sqlite_demo_dashboard",
+  "version": 1
+}

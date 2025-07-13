@@ -1,25 +1,25 @@
 import {
+  AlertErrorPayload,
+  AlertPayload,
   DataQueryRequest,
   DataQueryResponse,
   DataSourceApi,
   PanelData,
   TimeRange,
-  AlertPayload,
-  AlertErrorPayload,
 } from '@grafana/data';
 import { getDataSourceSrv } from '@grafana/runtime';
 
 import {
-  DataSourceQueryConfig,
-  DataSourceInfo,
   DataSourceContext,
+  DataSourceInfo,
+  DataSourceQueryConfig,
   NotificationContext,
 } from '../types';
 
 /**
  * Default query timeout in milliseconds
  */
-const DEFAULT_QUERY_TIMEOUT = 30000;
+const defaultQueryTimeout = 30000;
 
 /**
  * Create Data Source Context
@@ -77,12 +77,12 @@ export const createDataSourceContext = (
       }
 
       // Log data source info for debugging
-      console.log('DataSource info:', {
-        uid: dataSource.uid,
-        type: dataSource.type,
-        name: dataSource.name,
-        meta: dataSource.meta
-      });
+      // console.log('DataSource info:', {
+      //   uid: dataSource.uid,
+      //   type: dataSource.type,
+      //   name: dataSource.name,
+      //   meta: dataSource.meta
+      // });
 
       // Create query request
       const request: DataQueryRequest = {
@@ -107,28 +107,29 @@ export const createDataSourceContext = (
         scopedVars: {},
       };
 
-      console.log('Query request:', JSON.stringify(request, null, 2));
+      // Debug logging for SQLite queries
+
 
       // Execute query with timeout
-      const timeoutPromise = new Promise<never>((_, reject) => {
+      const timeoutPromise = new Promise<never>((unused, reject) => {
         setTimeout(() => {
           reject(new Error(`Query timeout after ${options.queryTimeout}ms`));
-        }, options.queryTimeout || DEFAULT_QUERY_TIMEOUT);
+        }, options.queryTimeout || defaultQueryTimeout);
       });
 
       const queryPromise = dataSource.query(request);
       const result = await Promise.race([queryPromise, timeoutPromise]);
 
-      console.log('Query result:', result);
+      // console.log('Query result:', result);
       
       // Handle Observable response by converting to Promise if needed
       let finalResult: DataQueryResponse;
-      if (result && typeof (result as any).subscribe === 'function') {
+      if (result && typeof (result as { subscribe?: (observer: any) => void }).subscribe === 'function') {
         // It's an Observable, convert to Promise
         finalResult = await new Promise<DataQueryResponse>((resolve, reject) => {
-          (result as any).subscribe({
+          (result as { subscribe: (observer: any) => void }).subscribe({
             next: (value: DataQueryResponse) => resolve(value),
-            error: (error: any) => reject(error),
+            error: (error: Error) => reject(error),
             complete: () => {}
           });
         });
@@ -138,22 +139,22 @@ export const createDataSourceContext = (
       
       // Check for empty results and provide helpful debugging
       if (finalResult && finalResult.data) {
-        console.log('Number of data frames:', finalResult.data.length);
-        finalResult.data.forEach((frame: any, index: number) => {
-          console.log(`Frame ${index}:`, {
-            name: frame.name,
-            length: frame.length,
-            fields: frame.fields?.map((f: any) => ({ name: f.name, type: f.type, values: f.values?.length }))
-          });
-        });
+        // console.log('Number of data frames:', finalResult.data.length);
+        // finalResult.data.forEach((frame: any, index: number) => {
+        //   console.log(`Frame ${index}:`, {
+        //     name: frame.name,
+        //     length: frame.length,
+        //     fields: frame.fields?.map((f: any) => ({ name: f.name, type: f.type, values: f.values?.length }))
+        //   });
+        // });
         
         if (finalResult.data.length === 0) {
-          console.warn('Query returned no data frames. Check your query and data source connection.');
+          // console.warn('Query returned no data frames. Check your query and data source connection.');
         } else if (finalResult.data.every((frame: any) => frame.length === 0)) {
-          console.warn('Query returned empty data frames. Check if your query matches existing data.');
+          // console.warn('Query returned empty data frames. Check if your query matches existing data.');
         }
       } else {
-        console.warn('Query result is null or has no data property:', finalResult);
+        // console.warn('Query result is null or has no data property:', finalResult);
       }
       
       return finalResult;
@@ -174,6 +175,8 @@ export const createDataSourceContext = (
     const dataSourceSrv = getDataSourceService();
     const dataSource = await dataSourceSrv.get(dataSourceUid);
     
+
+    
     // Build query config based on data source type
     let queryConfig: DataSourceQueryConfig;
     
@@ -186,6 +189,17 @@ export const createDataSourceContext = (
         format: 'table',
         refId: 'A',
       };
+    } else if (dataSource.type === 'frser-sqlite-datasource') {
+      // For SQLite data source, use queryText and rawQueryText
+      queryConfig = {
+        queryText: sqlQuery,
+        rawQueryText: sqlQuery,
+        query: sqlQuery, // Also set query as fallback
+        queryType: 'table',
+        format: 'table',
+        refId: 'A',
+      };
+
     } else {
       // For other data sources, try using query field
       queryConfig = {
@@ -195,7 +209,8 @@ export const createDataSourceContext = (
       };
     }
     
-    console.log('SQL Query config for', dataSource.type, ':', queryConfig);
+
+    
     return executeQuery(dataSourceUid, queryConfig);
   };
 
@@ -217,7 +232,7 @@ export const createDataSourceContext = (
       const dataSourceSrv = getDataSourceService();
       const dataSources = dataSourceSrv.getList();
 
-      console.log('Available data sources:', dataSources);
+      // console.log('Available data sources:', dataSources);
 
       return dataSources.map((ds) => ({
         uid: ds.uid,
@@ -226,7 +241,7 @@ export const createDataSourceContext = (
         accessible: true,
       }));
     } catch (error) {
-      console.error('Failed to get data sources:', error);
+      // console.error('Failed to get data sources:', error);
       if (options.showQueryErrors) {
         notify.error('Failed to get available data sources');
       }
@@ -248,7 +263,7 @@ export const createDataSourceContext = (
       }
       return null;
     } catch (error) {
-      console.error('Failed to get data source by name:', error);
+      // console.error('Failed to get data source by name:', error);
       return null;
     }
   };
@@ -264,8 +279,9 @@ export const createDataSourceContext = (
       if (!response.data || response.data.length === 0) {
         return { 
           series: [] as any[], 
-          rows: [] as any[], 
-          fields: [] as string[] 
+          rows: [] as Array<Record<string, any>>, 
+          fields: [] as string[],
+          raw: response
         };
       }
 
@@ -310,7 +326,9 @@ export const createDataSourceContext = (
       const values: any[] = [];
 
       response.data.forEach((frame) => {
-        if (!frame.fields) return;
+        if (!frame.fields) {
+          return;
+        }
 
         if (fieldName) {
           const field = frame.fields.find((f: any) => f.name === fieldName);
@@ -331,7 +349,7 @@ export const createDataSourceContext = (
     /**
      * Convert to Objects
      */
-    toObjects: (response: DataQueryResponse): Record<string, any>[] => {
+    toObjects: (response: DataQueryResponse): Array<Record<string, any>> => {
       const formatted = utils.formatResults(response);
       return formatted.rows;
     },

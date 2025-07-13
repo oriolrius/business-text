@@ -117,6 +117,7 @@
     "test:e2e": "npx playwright test",
     "test:e2e:dev": "npx playwright test --ui",
     "test:e2e:docker": "docker compose --profile e2e up --exit-code-from test",
+    "test:sqlite": "node scripts/test-sqlite-access.js",
     "upgrade": "npm upgrade --save",
     "release": "npm version patch && npm publish",
     "release:patch": "npm version patch && npm publish",
