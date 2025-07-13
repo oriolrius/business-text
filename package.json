@@ -1,6 +1,6 @@
 {
   "name": "@oriolrius/grafana-business-text",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "description": "Data-driven text with Markdown and Handlebars support for Grafana",
   "author": "Oriol Rius",
   "license": "Apache-2.0",
