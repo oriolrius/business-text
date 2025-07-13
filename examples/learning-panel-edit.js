@@ -4,8 +4,6 @@ let originalValues = {};
 let tableStructure = null; // Store table structure info
 let currentFocusedInput = null; // Track currently focused input for keyboard navigation
 
-document.getElementById('load-devices').addEventListener('click', loadDevices);
-
 async function loadDevices() {
   try {
     const result = await context.dataSource.sql(currentDataSourceUid, 'SELECT * FROM devices');
@@ -52,7 +50,7 @@ async function loadDevices() {
             <th style="
               position: sticky;
               left: 0;
-              z-index: 10;
+              z-index: 20;
               width: 80px;
               padding: ${theme.spacing(1, 2)};
               border: 1px solid ${theme.colors.border.medium};
@@ -60,14 +58,16 @@ async function loadDevices() {
               color: ${theme.colors.primary.contrastText};
               text-align: center;
               background: ${theme.colors.primary.main};
-              box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+              background-clip: padding-box;
+              box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${theme.colors.primary.main};
+              border-right: 3px solid ${theme.colors.border.strong};
             ">Actions</th>
             
             <!-- Frozen hostname column -->
             <th style="
               position: sticky;
               left: 80px;
-              z-index: 9;
+              z-index: 19;
               width: 150px;
               padding: ${theme.spacing(1, 2)};
               border: 1px solid ${theme.colors.border.medium};
@@ -75,14 +75,16 @@ async function loadDevices() {
               color: ${theme.colors.primary.contrastText};
               text-align: left;
               background: ${theme.colors.primary.main};
-              box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+              background-clip: padding-box;
+              box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${theme.colors.primary.main};
+              border-right: 3px solid ${theme.colors.border.strong};
             ">hostname</th>
             
             <!-- Frozen ip_address column -->
             <th style="
               position: sticky;
               left: 230px;
-              z-index: 8;
+              z-index: 18;
               width: 140px;
               padding: ${theme.spacing(1, 2)};
               border: 1px solid ${theme.colors.border.medium};
@@ -90,17 +92,19 @@ async function loadDevices() {
               color: ${theme.colors.primary.contrastText};
               text-align: left;
               background: ${theme.colors.primary.main};
-              box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+              background-clip: padding-box;
+              box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${theme.colors.primary.main};
+              border-right: 3px solid ${theme.colors.border.strong};
             ">ip_address</th>`;
 
     // Add remaining headers (scrollable)
     tableStructure.fields.forEach(key => {
       const isId = key === tableStructure.idField;
       const isFrozen = key === 'hostname' || key === 'ip_address';
-      
+
       // Skip ID column and frozen columns (already added)
       if (isId || isFrozen) return;
-      
+
       html += `<th style="
         min-width: 120px;
         padding: ${theme.spacing(1, 2)};
@@ -111,7 +115,7 @@ async function loadDevices() {
         background: ${theme.colors.primary.main};
       ">${key}</th>`;
     });
-    
+
     html += `
           </tr>
         </thead>
@@ -119,13 +123,30 @@ async function loadDevices() {
 
     // Add rows with Font Awesome icons and frozen columns
     rows.forEach((row, index) => {
-      // Alternate row colors for better readability
-      const rowBg = index % 2 === 0 ? theme.colors.background.primary : 'rgba(204, 204, 220, 0.05)';
+      // Alternate row colors for better readability - make even rows fully opaque
+      const rowBg = index % 2 === 0 ? theme.colors.background.primary : theme.colors.background.secondary;
 
       html += `<tr data-row-index="${index}" style="
         background: ${rowBg};
-      " onmouseover="this.style.background='${theme.colors.action.hover}'" 
-         onmouseout="this.style.background='${rowBg}'">`;
+      " onmouseover="
+        this.style.background='${theme.colors.action.hover}';
+        // Update frozen column backgrounds on hover using more specific selectors
+        const actionCell = this.children[0];
+        const hostnameCell = this.children[1];
+        const ipCell = this.children[2];
+        if (actionCell) actionCell.style.boxShadow = '2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${theme.colors.action.hover}, inset 3px 0 0 ${theme.colors.border.strong}';
+        if (hostnameCell) hostnameCell.style.boxShadow = '2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${theme.colors.action.hover}, inset 3px 0 0 ${theme.colors.border.strong}';
+        if (ipCell) ipCell.style.boxShadow = '2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${theme.colors.action.hover}, inset 3px 0 0 ${theme.colors.border.strong}';
+      " onmouseout="
+        this.style.background='${rowBg}';
+        // Restore frozen column backgrounds using child selectors
+        const actionCell = this.children[0];
+        const hostnameCell = this.children[1];
+        const ipCell = this.children[2];
+        if (actionCell) actionCell.style.boxShadow = '2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${rowBg}, inset 3px 0 0 ${theme.colors.border.strong}';
+        if (hostnameCell) hostnameCell.style.boxShadow = '2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${rowBg}, inset 3px 0 0 ${theme.colors.border.strong}';
+        if (ipCell) ipCell.style.boxShadow = '2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${rowBg}, inset 3px 0 0 ${theme.colors.border.strong}';
+      ">`;
 
       // Get ID value for operations
       const idValue = row[tableStructure.idField];
@@ -134,15 +155,16 @@ async function loadDevices() {
       html += `<td style="
         position: sticky;
         left: 0;
-        z-index: 5;
+        z-index: 15;
         width: 80px;
         padding: ${theme.spacing(1)};
-        border: 1px solid ${theme.colors.border.weak};
+        border: 1px solid transparent;
         background: ${rowBg};
+        background-clip: padding-box;
         text-align: center;
-        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
-      " onmouseover="this.style.background='${theme.colors.action.hover}'" 
-         onmouseout="this.style.background='${rowBg}'">
+        box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${rowBg}, inset 3px 0 0 ${theme.colors.border.strong};
+        border-right: 3px solid ${theme.colors.border.strong};
+      ">
         
         <!-- Edit Icon -->
         <i class="edit-icon fas fa-pen" 
@@ -219,24 +241,26 @@ async function loadDevices() {
       const hostnameKey = 'hostname';
       const hostnameCellId = `cell-${index}-hostname`;
       originalValues[hostnameCellId] = hostnameValue;
-      
+
       html += `<td class="editable-cell" 
                    data-field="${hostnameKey}" 
                    data-cell-id="${hostnameCellId}" 
                    data-row-index="${index}"
+                   data-original-value="${hostnameValue}"
                    style="
         position: sticky;
         left: 80px;
-        z-index: 4;
+        z-index: 14;
         width: 150px;
         padding: ${theme.spacing(1, 2)};
-        border: 1px solid ${theme.colors.border.weak};
+        border: 1px solid transparent;
         color: ${theme.colors.text.primary};
         cursor: pointer;
         background: ${rowBg};
-        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
-      " onmouseover="this.style.background='${theme.colors.action.hover}'" 
-         onmouseout="this.style.background='${rowBg}'"
+        background-clip: padding-box;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${rowBg}, inset 3px 0 0 ${theme.colors.border.strong};
+        border-right: 3px solid ${theme.colors.border.strong};
+      "
          title="Click to edit">${hostnameValue}</td>`;
 
       // Frozen ip_address column
@@ -244,43 +268,46 @@ async function loadDevices() {
       const ipKey = 'ip_address';
       const ipCellId = `cell-${index}-ip_address`;
       originalValues[ipCellId] = ipValue;
-      
+
       html += `<td class="editable-cell" 
                    data-field="${ipKey}" 
                    data-cell-id="${ipCellId}" 
                    data-row-index="${index}"
+                   data-original-value="${ipValue}"
                    style="
         position: sticky;
         left: 230px;
-        z-index: 3;
+        z-index: 13;
         width: 140px;
         padding: ${theme.spacing(1, 2)};
-        border: 1px solid ${theme.colors.border.weak};
+        border: 1px solid transparent;
         color: ${theme.colors.text.primary};
         cursor: pointer;
         background: ${rowBg};
-        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
-      " onmouseover="this.style.background='${theme.colors.action.hover}'" 
-         onmouseout="this.style.background='${rowBg}'"
+        background-clip: padding-box;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px ${rowBg}, inset 3px 0 0 ${theme.colors.border.strong};
+        border-right: 3px solid ${theme.colors.border.strong};
+      "
          title="Click to edit">${ipValue}</td>`;
 
       // Add remaining scrollable columns
       tableStructure.fields.forEach((key, keyIndex) => {
         const isIdField = key === tableStructure.idField;
         const isFrozen = key === 'hostname' || key === 'ip_address';
-        
+
         // Skip ID and frozen columns (already handled)
         if (isIdField || isFrozen) return;
-        
+
         const cellId = `cell-${index}-${keyIndex}`;
         originalValues[cellId] = row[key];
         const isEditable = !isIdField;
-        
+
         html += `<td class="${isEditable ? 'editable-cell' : 'id-cell'}" 
                      data-field="${key}" 
                      data-cell-id="${cellId}" 
                      data-row-index="${index}"
                      data-field-index="${keyIndex}"
+                     data-original-value="${row[key]}"
                      style="
           min-width: 120px;
           padding: ${theme.spacing(1, 2)};
@@ -337,13 +364,13 @@ function detectIdField(fields) {
     /^pk$/i,           // exact match: "pk" (primary key)
     /^primary_key$/i   // exact match: "primary_key"
   ];
-  
+
   // Find first field matching ID patterns
   for (const pattern of idPatterns) {
     const idField = fields.find(field => pattern.test(field));
     if (idField) return idField;
   }
-  
+
   // Fallback: return first field (most common case)
   return fields[0];
 }
@@ -359,10 +386,10 @@ function formatSqlValue(fieldName, value) {
   if (value === null || value === 'null' || value === '') {
     return 'NULL';
   }
-  
+
   // Convert to string and trim
   const stringValue = String(value).trim();
-  
+
   // Handle timestamp fields (common patterns)
   const timestampPatterns = [
     /.*_at$/i,        // ends with "_at": created_at, updated_at, last_seen_at
@@ -371,44 +398,44 @@ function formatSqlValue(fieldName, value) {
     /^date$/i,        // exact: "date"
     /^time$/i         // exact: "time"
   ];
-  
+
   const isTimestampField = timestampPatterns.some(pattern => pattern.test(fieldName));
-  
+
   if (isTimestampField) {
     // Check if it's a Unix timestamp (numbers only, reasonable length)
     if (/^\d{10,13}$/.test(stringValue)) {
       // Convert Unix timestamp to PostgreSQL timestamp
       const timestamp = parseInt(stringValue);
       const date = new Date(timestamp > 9999999999 ? timestamp : timestamp * 1000);
-      
+
       if (isNaN(date.getTime())) {
         return 'NULL';
       }
-      
+
       // Format as PostgreSQL timestamp
       return `'${date.toISOString()}'`;
     }
-    
+
     // Check if it's already a valid date string
     const parsedDate = new Date(stringValue);
     if (!isNaN(parsedDate.getTime())) {
       return `'${parsedDate.toISOString()}'`;
     }
-    
+
     // If we can't parse it as a date, treat it as NULL
     return 'NULL';
   }
-  
+
   // Handle numeric fields
   if (/^\-?\d+(\.\d+)?$/.test(stringValue)) {
     return stringValue; // No quotes for numbers
   }
-  
+
   // Handle boolean fields
   if (stringValue.toLowerCase() === 'true' || stringValue.toLowerCase() === 'false') {
     return stringValue.toLowerCase();
   }
-  
+
   // Default: treat as string with proper escaping
   return `'${stringValue.replace(/'/g, "''")}'`;
 }
@@ -418,7 +445,7 @@ function addEventListeners() {
 
   // Edit icon listeners
   document.querySelectorAll('.edit-icon').forEach(icon => {
-    icon.addEventListener('click', function() {
+    icon.addEventListener('click', function () {
       const rowIndex = this.getAttribute('data-row-index');
       enterEditMode(rowIndex);
     });
@@ -426,7 +453,7 @@ function addEventListeners() {
 
   // Save icon listeners
   document.querySelectorAll('.save-icon').forEach(icon => {
-    icon.addEventListener('click', async function() {
+    icon.addEventListener('click', async function () {
       const deviceId = this.getAttribute('data-device-id');
       const rowIndex = this.getAttribute('data-row-index');
       await saveRow(deviceId, rowIndex);
@@ -435,7 +462,7 @@ function addEventListeners() {
 
   // Cancel icon listeners
   document.querySelectorAll('.cancel-icon').forEach(icon => {
-    icon.addEventListener('click', function() {
+    icon.addEventListener('click', function () {
       const rowIndex = this.getAttribute('data-row-index');
       cancelEdit(rowIndex);
     });
@@ -443,7 +470,7 @@ function addEventListeners() {
 
   // Delete icon listeners
   document.querySelectorAll('.delete-icon').forEach(icon => {
-    icon.addEventListener('click', async function() {
+    icon.addEventListener('click', async function () {
       const deviceId = this.getAttribute('data-device-id');
       await deleteDevice(deviceId, this);
     });
@@ -451,7 +478,7 @@ function addEventListeners() {
 
   // Cell click listeners for inline editing
   document.querySelectorAll('.editable-cell').forEach(cell => {
-    cell.addEventListener('click', function() {
+    cell.addEventListener('click', function () {
       const rowIndex = this.getAttribute('data-row-index');
       if (editingCell === null) {
         enterEditMode(rowIndex);
@@ -468,12 +495,12 @@ function addEventListeners() {
 function handleGlobalKeyboard(e) {
   // Only handle keyboard events during editing
   if (editingCell === null) return;
-  
+
   if (e.key === 'Escape') {
     e.preventDefault();
     cancelEdit(editingCell);
   }
-  
+
   if (e.ctrlKey && e.key === 's') {
     e.preventDefault();
     const row = document.querySelector(`tr[data-row-index="${editingCell}"]`);
@@ -486,7 +513,7 @@ function handleGlobalKeyboard(e) {
 
 function enterEditMode(rowIndex) {
   if (editingCell !== null) {
-    context.grafana.notifyWarning('Please save or cancel current edit before editing another row');
+    context.grafana.notifyError('Please save or cancel current edit before editing another row');
     return;
   }
 
@@ -500,8 +527,16 @@ function enterEditMode(rowIndex) {
   saveIcon.style.display = 'inline-block';
   cancelIcon.style.display = 'inline-block';
 
-  // Make cells editable
+  // Store current values before making cells editable to ensure we have fresh data
   const cells = row.querySelectorAll('.editable-cell');
+  cells.forEach(cell => {
+    const cellId = cell.getAttribute('data-cell-id');
+    const currentValue = cell.textContent.trim();
+    // Update originalValues with current cell content to ensure accuracy
+    originalValues[cellId] = currentValue;
+  });
+
+  // Make cells editable
   cells.forEach(cell => {
     makeInlineEditable(cell);
   });
@@ -511,12 +546,25 @@ function enterEditMode(rowIndex) {
 
 function makeInlineEditable(cell) {
   const theme = context.grafana.theme;
-  const originalValue = cell.textContent;
+  const cellId = cell.getAttribute('data-cell-id');
   const fieldName = cell.getAttribute('data-field');
+  const rowIndex = cell.getAttribute('data-row-index');
   
+  // Get original value from data attribute first, then stored values, then textContent
+  let originalValue = cell.getAttribute('data-original-value');
+  if (!originalValue) {
+    originalValue = originalValues[cellId];
+  }
+  if (originalValue === undefined || originalValue === null) {
+    originalValue = cell.textContent.trim();
+  }
+  if (!originalValue) {
+    originalValue = '';
+  }
+
   // Skip ID field editing
   if (fieldName === tableStructure.idField) {
-    context.grafana.notifyWarning('ID field cannot be edited');
+    context.grafana.notifyError('ID field cannot be edited');
     return;
   }
 
@@ -526,48 +574,51 @@ function makeInlineEditable(cell) {
   input.value = originalValue;
   input.setAttribute('data-original-value', originalValue);
   input.setAttribute('data-field', fieldName);
-  
+
   // Add placeholder for timestamp fields
   const timestampPatterns = [
     /.*_at$/i, /.*_time$/i, /.*timestamp$/i, /^date$/i, /^time$/i
   ];
   const isTimestampField = timestampPatterns.some(pattern => pattern.test(fieldName));
-  
+
   if (isTimestampField) {
     input.placeholder = 'e.g., 1671234567 (Unix) or 2023-12-17T10:30:00Z (ISO)';
     input.title = 'Enter Unix timestamp or ISO date format';
   }
-  
+
   input.style.cssText = `
     width: 100%;
-    background: ${theme.colors.background.secondary};
-    border: 2px solid ${theme.colors.primary.main};
+    background: ${theme.colors.background.canvas};
+    border: 1px solid ${theme.colors.border.medium};
     color: ${theme.colors.text.primary};
     font-family: ${theme.typography.fontFamily};
-    font-size: ${theme.typography.body.fontSize};
-    padding: ${theme.spacing(0.5)};
-    border-radius: ${theme.shape.borderRadius(1)}px;
+    font-size: ${theme.typography.fontSize};
+    padding: ${theme.spacing(1)};
+    border-radius: ${theme.shape.radius.default}px;
     box-sizing: border-box;
     outline: none;
-    transition: border-color 0.2s ease;
+    transition: all 0.2s ease;
+    box-shadow: none;
   `;
 
   // Enhanced keyboard navigation and input handling
-  input.addEventListener('keydown', function(e) {
+  input.addEventListener('keydown', function (e) {
     handleInputKeyboard(e, cell, input);
   });
-  
-  input.addEventListener('focus', function() {
+
+  input.addEventListener('focus', function () {
     currentFocusedInput = input;
-    this.style.borderColor = theme.colors.primary.main;
+    this.style.borderColor = theme.colors.primary.border;
+    this.style.boxShadow = `0 0 0 2px ${theme.colors.primary.transparent}`;
   });
-  
-  input.addEventListener('blur', function() {
+
+  input.addEventListener('blur', function () {
     this.style.borderColor = theme.colors.border.medium;
+    this.style.boxShadow = 'none';
   });
-  
+
   // Validate input on change
-  input.addEventListener('input', function() {
+  input.addEventListener('input', function () {
     validateInput(input, theme);
   });
 
@@ -580,7 +631,7 @@ function makeInlineEditable(cell) {
 
 // Enhanced keyboard handling for input fields
 function handleInputKeyboard(e, cell, input) {
-  switch(e.key) {
+  switch (e.key) {
     case 'Enter':
       e.preventDefault();
       const nextCell = getNextEditableCell(cell);
@@ -595,7 +646,7 @@ function handleInputKeyboard(e, cell, input) {
         }
       }
       break;
-      
+
     case 'Tab':
       e.preventDefault();
       if (e.shiftKey) {
@@ -612,7 +663,7 @@ function handleInputKeyboard(e, cell, input) {
         }
       }
       break;
-      
+
     case 'Escape':
       e.preventDefault();
       cancelEdit(editingCell);
@@ -624,14 +675,15 @@ function handleInputKeyboard(e, cell, input) {
 function validateInput(input, theme) {
   const value = input.value.trim();
   const fieldName = input.getAttribute('data-field');
-  
+
   // Basic validation - can be extended based on field type
   if (value === '') {
-    input.style.borderColor = theme.colors.warning.main;
+    input.style.borderColor = theme.colors.warning.border;
+    input.style.boxShadow = `0 0 0 2px ${theme.colors.warning.transparent}`;
     input.title = 'Field cannot be empty';
     return false;
   }
-  
+
   // Validate timestamp fields
   const timestampPatterns = [
     /.*_at$/i,        // ends with "_at": created_at, updated_at, last_seen_at
@@ -640,43 +692,48 @@ function validateInput(input, theme) {
     /^date$/i,        // exact: "date"
     /^time$/i         // exact: "time"
   ];
-  
+
   const isTimestampField = timestampPatterns.some(pattern => pattern.test(fieldName));
-  
+
   if (isTimestampField) {
     // Check if it's a valid Unix timestamp
     if (/^\d{10,13}$/.test(value)) {
       const timestamp = parseInt(value);
       const date = new Date(timestamp > 9999999999 ? timestamp : timestamp * 1000);
-      
+
       if (isNaN(date.getTime())) {
-        input.style.borderColor = theme.colors.error.main;
+        input.style.borderColor = theme.colors.error.border;
+        input.style.boxShadow = `0 0 0 2px ${theme.colors.error.transparent}`;
         input.title = 'Invalid timestamp format';
         return false;
       }
-      
+
       // Show parsed date in tooltip for validation
       input.title = `Will be saved as: ${date.toISOString()}`;
-      input.style.borderColor = theme.colors.success.main;
+      input.style.borderColor = theme.colors.success.border;
+      input.style.boxShadow = `0 0 0 2px ${theme.colors.success.transparent}`;
       return true;
     }
-    
+
     // Check if it's a valid date string
     const parsedDate = new Date(value);
     if (!isNaN(parsedDate.getTime())) {
       input.title = `Will be saved as: ${parsedDate.toISOString()}`;
-      input.style.borderColor = theme.colors.success.main;
+      input.style.borderColor = theme.colors.success.border;
+      input.style.boxShadow = `0 0 0 2px ${theme.colors.success.transparent}`;
       return true;
     }
-    
+
     // Invalid timestamp format
-    input.style.borderColor = theme.colors.error.main;
+    input.style.borderColor = theme.colors.error.border;
+    input.style.boxShadow = `0 0 0 2px ${theme.colors.error.transparent}`;
     input.title = 'Invalid date/time format. Use Unix timestamp (e.g., 1671234567) or ISO date (e.g., 2023-12-17T10:30:00Z)';
     return false;
   }
-  
+
   // Default validation passed
-  input.style.borderColor = theme.colors.primary.main;
+  input.style.borderColor = theme.colors.border.medium;
+  input.style.boxShadow = 'none';
   input.title = '';
   return true;
 }
@@ -685,7 +742,7 @@ function getNextEditableCell(currentCell) {
   const row = currentCell.closest('tr');
   const allCells = Array.from(row.querySelectorAll('.editable-cell'));
   const currentIndex = allCells.indexOf(currentCell);
-  
+
   // Return next editable cell in same row, or first cell of next row
   if (currentIndex < allCells.length - 1) {
     return allCells[currentIndex + 1];
@@ -712,7 +769,7 @@ function getPreviousEditableCell(currentCell) {
   const row = currentCell.closest('tr');
   const allCells = Array.from(row.querySelectorAll('.editable-cell'));
   const currentIndex = allCells.indexOf(currentCell);
-  
+
   // Return previous editable cell in same row, or last cell of previous row
   if (currentIndex > 0) {
     return allCells[currentIndex - 1];
@@ -739,22 +796,22 @@ async function saveRow(deviceId, rowIndex) {
   const theme = context.grafana.theme;
   const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
   const cells = row.querySelectorAll('.editable-cell');
-  
+
   // Collect updated data from editable fields only
   const updatedData = {};
   const changes = {};
   let hasChanges = false;
   let hasValidationErrors = false;
-  
+
   cells.forEach(cell => {
     const fieldName = cell.getAttribute('data-field');
     const cellId = cell.getAttribute('data-cell-id');
     let newValue;
-    
+
     const input = cell.querySelector('input');
     if (input) {
       newValue = input.value.trim();
-      
+
       // Use the enhanced validation function
       if (!validateInput(input, theme)) {
         hasValidationErrors = true;
@@ -763,9 +820,9 @@ async function saveRow(deviceId, rowIndex) {
     } else {
       newValue = cell.textContent.trim();
     }
-    
+
     updatedData[fieldName] = newValue;
-    
+
     // Check for changes
     if (originalValues[cellId] !== newValue) {
       hasChanges = true;
@@ -777,13 +834,13 @@ async function saveRow(deviceId, rowIndex) {
   });
 
   if (hasValidationErrors) {
-    context.grafana.notifyWarning('Please fix validation errors before saving');
+    context.grafana.notifyError('Please fix validation errors before saving');
     return;
   }
 
   if (!hasChanges) {
     exitEditMode(rowIndex);
-    context.grafana.notifyInfo('No changes to save');
+    context.grafana.notifySuccess('No changes to save');
     return;
   }
 
@@ -795,50 +852,56 @@ async function saveRow(deviceId, rowIndex) {
         return `${key} = ${formatSqlValue(key, newValue)}`;
       })
       .join(', ');
-    
+
     const updateSql = `UPDATE devices SET ${updates} WHERE ${tableStructure.idField} = '${deviceId}'`;
-    
+
     // Show saving state
     const saveIcon = row.querySelector('.save-icon');
     const originalSaveClass = saveIcon.className;
     saveIcon.className = 'save-icon fas fa-spinner fa-spin';
     saveIcon.style.pointerEvents = 'none';
     saveIcon.title = 'Saving...';
-    
+
     // Execute UPDATE SQL
     await context.dataSource.sql(currentDataSourceUid, updateSql);
-    
+
     // Update UI with new values and reset original values
     cells.forEach(cell => {
       const fieldName = cell.getAttribute('data-field');
       const cellId = cell.getAttribute('data-cell-id');
       const newValue = updatedData[fieldName];
-      
+
       cell.innerHTML = newValue;
       originalValues[cellId] = newValue; // Update stored original values
     });
-    
+
+    // Restore save icon before exiting edit mode
+    saveIcon.className = originalSaveClass;
+    saveIcon.style.pointerEvents = 'auto';
+    saveIcon.title = 'Save changes';
+
     exitEditMode(rowIndex);
-    
+
     // Show detailed success message
     const changedFields = Object.keys(changes).join(', ');
-    context.grafana.notifySuccess(`Device ${deviceId} updated successfully. Changed: ${changedFields}`);
-    
+    // context.grafana.notifySuccess(`Device ${deviceId} updated successfully. Changed: ${changedFields}`);
+    context.grafana.notifySuccess(`Device updated successfully. Changed: ${changedFields}`);
+
   } catch (error) {
     // Re-enable save icon on error
     const saveIcon = row.querySelector('.save-icon');
     saveIcon.className = originalSaveClass;
     saveIcon.style.pointerEvents = 'auto';
     saveIcon.title = 'Save changes';
-    
+
     // Parse and display detailed error information
     let errorMessage = 'Unknown error occurred';
     let errorDetails = '';
-    
+
     if (error && error.message) {
       errorMessage = error.message;
     }
-    
+
     // Check if it's a database query error with additional details
     if (error && error.data && error.data.results) {
       const results = error.data.results;
@@ -849,7 +912,7 @@ async function saveRow(deviceId, rowIndex) {
           if (result.errorSource) {
             errorDetails += `Source: ${result.errorSource}. `;
           }
-          
+
           // Extract the executed query for debugging
           if (result.frames && result.frames[0] && result.frames[0].schema && result.frames[0].schema.meta) {
             const executedQuery = result.frames[0].schema.meta.executedQueryString;
@@ -861,10 +924,10 @@ async function saveRow(deviceId, rowIndex) {
         }
       });
     }
-    
+
     // Show comprehensive error notification
     const fullErrorMessage = `Update failed: ${errorMessage}${errorDetails ? ' | ' + errorDetails : ''}`;
-    
+
     // Use a longer notification for complex errors
     if (context.grafana.notifyError) {
       context.grafana.notifyError(fullErrorMessage);
@@ -872,7 +935,7 @@ async function saveRow(deviceId, rowIndex) {
       // Fallback for older Grafana versions
       alert(`Error: ${fullErrorMessage}`);
     }
-    
+
     console.error('Save operation failed:', {
       originalError: error,
       processedMessage: fullErrorMessage,
@@ -885,16 +948,16 @@ async function saveRow(deviceId, rowIndex) {
 function cancelEdit(rowIndex) {
   const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
   const cells = row.querySelectorAll('.editable-cell');
-  
+
   // Restore original values
   cells.forEach(cell => {
     const cellId = cell.getAttribute('data-cell-id');
     const originalValue = originalValues[cellId];
     cell.innerHTML = originalValue;
   });
-  
+
   exitEditMode(rowIndex);
-  context.grafana.notifyInfo('Edit cancelled');
+  context.grafana.notifySuccess('Edit cancelled');
 }
 
 function exitEditMode(rowIndex) {
@@ -907,6 +970,11 @@ function exitEditMode(rowIndex) {
   editIcon.style.display = 'inline-block';
   saveIcon.style.display = 'none';
   cancelIcon.style.display = 'none';
+
+  // Reset save icon to original state (in case it was a spinner)
+  saveIcon.className = 'save-icon fas fa-check';
+  saveIcon.style.pointerEvents = 'auto';
+  saveIcon.title = 'Save changes';
 
   // Clean up state
   editingCell = null;
@@ -947,11 +1015,11 @@ async function deleteDevice(deviceId, iconElement) {
 
     // Enhanced error handling for delete operation
     let errorMessage = 'Unknown error occurred';
-    
+
     if (error && error.message) {
       errorMessage = error.message;
     }
-    
+
     // Check for database-specific errors
     if (error && error.data && error.data.results) {
       const results = error.data.results;
@@ -966,7 +1034,7 @@ async function deleteDevice(deviceId, iconElement) {
     // Show comprehensive error notification
     const fullErrorMessage = `Delete failed: ${errorMessage}`;
     context.grafana.notifyError(fullErrorMessage);
-    
+
     console.error('Delete operation failed:', {
       originalError: error,
       processedMessage: fullErrorMessage,
@@ -984,3 +1052,6 @@ function cleanup() {
 
 // Optional: Call cleanup when leaving the panel or refreshing
 // This can be called from the panel's cleanup/destroy lifecycle if available
+
+
+document.getElementById('load-devices').addEventListener('click', loadDevices);
