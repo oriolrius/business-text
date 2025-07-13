@@ -14,8 +14,13 @@ import { useDashboardRefresh } from '@volkovlabs/components';
 import React, { useCallback, useEffect, useRef } from 'react';
 
 import { TEST_IDS } from '../../constants';
-import { RowItem } from '../../types';
-import { afterRenderCodeParameters, createExecutionCode } from '../../utils';
+import { RowItem, PanelOptions } from '../../types';
+import { 
+  afterRenderCodeParameters, 
+  createExecutionCode, 
+  createDataSourceContext, 
+  createNotificationContext 
+} from '../../utils';
 
 /**
  * Properties
@@ -69,6 +74,13 @@ export interface Props {
    * @type {TimeZone}
    */
   timeZone: TimeZone;
+
+  /**
+   * Panel Options
+   *
+   * @type {PanelOptions}
+   */
+  options: PanelOptions;
 }
 
 /**
@@ -82,6 +94,7 @@ export const Row: React.FC<Props> = ({
   eventBus,
   timeRange,
   timeZone,
+  options,
 }) => {
   /**
    * Row Ref
@@ -124,15 +137,32 @@ export const Row: React.FC<Props> = ({
   useEffect(() => {
     let unsubscribe: unknown = null;
     if (ref.current && afterRender) {
+      /**
+       * Create notification context
+       */
+      const notificationContext = createNotificationContext(notifySuccess, notifyError);
+
+      /**
+       * Create data source context
+       */
+      const dataSourceContext = createDataSourceContext(
+        item.panelData,
+        timeRange,
+        notificationContext,
+        options.dataSource
+      );
+
       const func = createExecutionCode('context', afterRender);
 
-      unsubscribe = func.call(
+      const result = func.call(
         functionThis.current,
         afterRenderCodeParameters.create({
           element: ref.current,
           data: item.data,
           panelData: item.panelData,
           dataFrame: item.dataFrame,
+          dataSource: dataSourceContext,
+          notify: notificationContext,
           grafana: {
             theme,
             notifySuccess,
@@ -147,6 +177,19 @@ export const Row: React.FC<Props> = ({
           },
         })
       );
+
+      // Handle async functions that return promises
+      if (result && typeof result.then === 'function') {
+        result.then((asyncUnsubscribe: any) => {
+          if (typeof asyncUnsubscribe === 'function') {
+            unsubscribe = asyncUnsubscribe;
+          }
+        }).catch((error: any) => {
+          console.error('Async code execution error:', error);
+        });
+      } else {
+        unsubscribe = result;
+      }
     }
 
     return () => {
@@ -167,6 +210,7 @@ export const Row: React.FC<Props> = ({
     theme,
     timeRange,
     timeZone,
+    options.dataSource,
   ]);
 
   return (

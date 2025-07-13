@@ -1,4 +1,3 @@
-import React from 'react';
 import { textUtil } from '@grafana/data';
 import { config } from '@grafana/runtime';
 import { render, screen } from '@testing-library/react';

@@ -99,6 +99,13 @@ describe('Panel', () => {
     wrap: false,
     afterRender: '',
     afterRenderRemoteUrl: '',
+    dataSource: {
+      enableDataSourceQueries: false,
+      defaultDataSourceUid: undefined,
+      queryTimeout: 30000,
+      enableCaching: false,
+      showQueryErrors: true,
+    },
   };
 
   /**

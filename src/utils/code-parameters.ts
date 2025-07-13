@@ -16,6 +16,8 @@ import handlebars from 'handlebars';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 import MarkdownIt from 'markdown-it';
 
+import { DataSourceContext, NotificationContext } from '../types';
+
 /**
  * Render Code Parameters
  */
@@ -49,6 +51,8 @@ const renderCodeParameters = {
         refresh: new CodeParameterItem<() => void>('Refresh dashboard.', CodeEditorSuggestionItemKind.Method),
       },
     },
+    dataSource: new CodeParameterItem<DataSourceContext>('Data source query API.'),
+    notify: new CodeParameterItem<NotificationContext>('Notification API.'),
   },
 };
 

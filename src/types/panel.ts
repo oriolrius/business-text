@@ -2,6 +2,7 @@ import { DataFrame, PanelData } from '@grafana/data';
 
 import { EditorOptions } from './editor';
 import { PartialItemConfig, Resource } from './resource';
+import { DataSourcePanelOptions } from './dataSource';
 
 /**
  * Editor Types
@@ -129,6 +130,13 @@ export interface PanelOptions {
    * @type {PartialItemConfig[]}
    */
   contentPartials: PartialItemConfig[];
+
+  /**
+   * Data Source Options
+   *
+   * @type {DataSourcePanelOptions}
+   */
+  dataSource: DataSourcePanelOptions;
 }
 
 /**

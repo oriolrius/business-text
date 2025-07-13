@@ -54,6 +54,7 @@ grafana cli plugins install volkovlabs-text-panel
 - Supports adding the Handlebars helpers and event handlers.
 - Supports adding CSS styles with dashboard variables.
 - Supports internationalization using custom helpers.
+- **Data Source Query Integration** - Execute queries against Grafana data sources directly from JavaScript code. [Learn more](docs/DATASOURCE_INTEGRATION.md)
 
 ## Documentation
 

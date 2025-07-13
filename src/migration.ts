@@ -105,6 +105,19 @@ export const getMigratedOptions = (panel: PanelModel<OutdatedPanelOptions & Pane
   }
 
   /**
+   * Add default data source options if missing
+   */
+  if (!actualOptions.dataSource) {
+    actualOptions.dataSource = {
+      enableDataSourceQueries: false,
+      defaultDataSourceUid: undefined,
+      queryTimeout: 30000,
+      enableCaching: false,
+      showQueryErrors: true,
+    };
+  }
+
+  /**
    * Normalize every row
    */
   if (everyRow !== undefined) {

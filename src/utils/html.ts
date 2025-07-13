@@ -20,6 +20,7 @@ import MarkdownIt from 'markdown-it';
 import { PanelOptions, PartialItemConfig, RenderMode } from '../types';
 import { createExecutionCode } from './code';
 import { beforeRenderCodeParameters } from './code-parameters';
+import { createDataSourceContext, createNotificationContext } from './dataSource';
 import { registerHelpers } from './handlebars';
 import { fetchAllPartials } from './partials';
 import { replaceVariablesHelper } from './variable';
@@ -121,6 +122,21 @@ export const generateHtml = async ({
   let unsubscribe: undefined | unknown;
 
   /**
+   * Create notification context
+   */
+  const notificationContext = createNotificationContext(notifySuccess, notifyError);
+
+  /**
+   * Create data source context
+   */
+  const dataSourceContext = createDataSourceContext(
+    panelData,
+    timeRange,
+    notificationContext,
+    options.dataSource
+  );
+
+  /**
    * Add Custom Helpers
    */
   if (helpers) {
@@ -136,6 +152,8 @@ export const generateHtml = async ({
         markdown: md,
         panelData,
         dataFrame,
+        dataSource: dataSourceContext,
+        notify: notificationContext,
         grafana: {
           getLocale,
           timeZone,
@@ -152,8 +170,13 @@ export const generateHtml = async ({
       helpers
     );
 
-    if (result instanceof Promise) {
-      unsubscribe = await result;
+    // Handle async functions that return promises
+    if (result && typeof result.then === 'function') {
+      try {
+        unsubscribe = await result;
+      } catch (error) {
+        console.error('Async helpers execution error:', error);
+      }
     } else {
       unsubscribe = result;
     }

@@ -28,6 +28,26 @@ describe('Code', () => {
       expect(result()).toEqual(123);
     });
 
+    it('Should create async function for await code', async () => {
+      const result = createExecutionCode('const data = await Promise.resolve(456); return data;');
+
+      expect(result).toBeInstanceOf(Function);
+      const promise = result();
+      expect(promise).toBeInstanceOf(Promise);
+      const value = await promise;
+      expect(value).toEqual(456);
+    });
+
+    it('Should create async function with context parameter', async () => {
+      const result = createExecutionCode('context', 'const data = await Promise.resolve(context.value); return data;');
+
+      expect(result).toBeInstanceOf(Function);
+      const promise = result({ value: 789 });
+      expect(promise).toBeInstanceOf(Promise);
+      const value = await promise;
+      expect(value).toEqual(789);
+    });
+
     it('Should handle syntax error', () => {
       const code = 'con b = 1;';
       const result = createExecutionCode(code);

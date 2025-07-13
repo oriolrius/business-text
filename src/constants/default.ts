@@ -20,4 +20,11 @@ export const DEFAULT_OPTIONS: PanelOptions = {
   status: '',
   styles: '',
   wrap: true,
+  dataSource: {
+    enableDataSourceQueries: false,
+    defaultDataSourceUid: undefined,
+    queryTimeout: 30000,
+    enableCaching: false,
+    showQueryErrors: true,
+  },
 };

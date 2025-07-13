@@ -207,5 +207,38 @@ export const plugin = new PanelPlugin<PanelOptions>(TextPanel)
         showIf: (config) => config.editors.includes(EditorType.STYLES) || config.styles !== DEFAULT_OPTIONS.styles,
       });
 
+    /**
+     * Data Source Integration
+     */
+    builder
+      .addBooleanSwitch({
+        path: 'dataSource.enableDataSourceQueries',
+        name: 'Enable Data Source Queries',
+        description: 'Allow JavaScript code to execute queries against Grafana data sources.',
+        defaultValue: DEFAULT_OPTIONS.dataSource.enableDataSourceQueries,
+        category: ['Data Source'],
+      })
+      .addNumberInput({
+        path: 'dataSource.queryTimeout',
+        name: 'Query Timeout (ms)',
+        description: 'Maximum time to wait for data source queries to complete.',
+        defaultValue: DEFAULT_OPTIONS.dataSource.queryTimeout,
+        category: ['Data Source'],
+        showIf: (config) => config.dataSource?.enableDataSourceQueries,
+        settings: {
+          min: 1000,
+          max: 300000,
+          step: 1000,
+        },
+      })
+      .addBooleanSwitch({
+        path: 'dataSource.showQueryErrors',
+        name: 'Show Query Errors',
+        description: 'Display data source query errors as notifications.',
+        defaultValue: DEFAULT_OPTIONS.dataSource.showQueryErrors,
+        category: ['Data Source'],
+        showIf: (config) => config.dataSource?.enableDataSourceQueries,
+      });
+
     return builder;
   });

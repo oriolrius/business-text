@@ -1,0 +1,138 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 9,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "afterRender": "context.notify.info('Processing data...');\r\n\r\nconsole.log('sources')\r\nconst dataSources = context.dataSource.getAvailable();\r\nconsole.log(dataSources);\r\n\r\nconsole.log('before');\r\ntry {\r\n  const data = await context.dataSource.sql(\"cerq98n76ap6od\", 'select * from devices');\r\n  context.notify.success('Query successful!');\r\n  console.log('Data loaded:', data);\r\n  const values = context.dataSource.utils.extractValues(data);\r\n  console.log('Values', values);\r\n} catch (error) {\r\n  context.notify.error('Query failed: ' + error.message);\r\n}\r\nconsole.log('after');",
+        "afterRenderRemoteUrl": "",
+        "content": "<p>\ncontingut: <div id=\"result\"></div>\n</p>",
+        "contentPartials": [],
+        "dataSource": {
+          "enableDataSourceQueries": true,
+          "queryTimeout": 30000,
+          "showQueryErrors": true
+        },
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "language": "markdown"
+        },
+        "editors": [
+          "default",
+          "helpers",
+          "afterRender",
+          "styles"
+        ],
+        "externalStyles": [],
+        "helpers": "",
+        "helpersRemoteUrl": "",
+        "renderMode": "data",
+        "styles": "",
+        "stylesRemoteUrl": "",
+        "wrap": true
+      },
+      "pluginVersion": "6.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "marcusolsson-static-datasource",
+            "uid": "U0HP2Rv4z"
+          },
+          "frame": {
+            "fields": [
+              {
+                "config": {},
+                "name": "foo",
+                "type": "string",
+                "values": [
+                  "var"
+                ]
+              }
+            ],
+            "meta": {}
+          },
+          "hide": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "cerq98n76ap6od"
+          },
+          "editorMode": "builder",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "",
+          "refId": "B",
+          "table": "device_creation_log"
+        }
+      ],
+      "title": "New panel",
+      "type": "volkovlabs-text-panel"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Learning",
+  "uid": "d8c78eca-c367-4160-87ef-ddee47025b37",
+  "version": 20
+}

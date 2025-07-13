@@ -341,6 +341,7 @@ export const Text: React.FC<Props> = ({
           timeRange={timeRange}
           timeZone={timeZone}
           replaceVariables={replaceVariables}
+          options={options}
         />
       ))}
     </>
