@@ -1,0 +1,321 @@
+/* SQLite Device Management - Table Styles */
+/* Extracted table-specific styles with frozen columns and responsive layout */
+
+/* Table container with scrolling support */
+.table-container {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: visible;
+  border: 1px solid var(--border-weak);
+  max-width: 100%;
+}
+
+/* Main table styling */
+.devices-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  table-layout: fixed;
+}
+
+/* Table header */
+.devices-table thead tr {
+  background: var(--primary-main);
+}
+
+.devices-table th {
+  padding: var(--spacing-1) var(--spacing-2);
+  border: 1px solid var(--border-medium);
+  font-weight: var(--font-weight-medium);
+  color: var(--primary-contrast-text);
+  text-align: left;
+  background: var(--primary-main);
+}
+
+/* Frozen columns styling */
+.actions-header {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  width: 80px;
+  text-align: center;
+  background: var(--primary-main);
+  background-clip: padding-box;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px var(--primary-main);
+  border-right: 3px solid var(--border-strong);
+}
+
+.hostname-header {
+  position: sticky;
+  left: 80px;
+  z-index: 19;
+  width: 150px;
+  background: var(--primary-main);
+  background-clip: padding-box;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px var(--primary-main);
+  border-right: 3px solid var(--border-strong);
+}
+
+.ip-header {
+  position: sticky;
+  left: 230px;
+  z-index: 18;
+  width: 140px;
+  background: var(--primary-main);
+  background-clip: padding-box;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px var(--primary-main);
+  border-right: 3px solid var(--border-strong);
+}
+
+.scrollable-header {
+  min-width: 120px;
+  background: var(--primary-main);
+}
+
+/* Table rows */
+.devices-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.devices-table tbody tr:nth-child(even) {
+  background: var(--background-secondary);
+}
+
+.devices-table tbody tr:hover {
+  background: var(--action-hover);
+}
+
+/* Table cells */
+.devices-table td {
+  padding: var(--spacing-1) var(--spacing-2);
+  border: 1px solid var(--border-weak);
+  color: var(--text-primary);
+  position: relative;
+}
+
+/* Actions column cells */
+.actions-cell {
+  position: sticky;
+  left: 0;
+  z-index: 15;
+  width: 80px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  text-align: center;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 3px 0 0 var(--border-strong);
+  border-right: 3px solid var(--border-strong);
+}
+
+/* Hostname column cells */
+.hostname-cell {
+  position: sticky;
+  left: 80px;
+  z-index: 14;
+  width: 150px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background-clip: padding-box;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 3px 0 0 var(--border-strong);
+  border-right: 3px solid var(--border-strong);
+}
+
+/* IP address column cells */
+.ip-cell {
+  position: sticky;
+  left: 230px;
+  z-index: 13;
+  width: 140px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background-clip: padding-box;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 3px 0 0 var(--border-strong);
+  border-right: 3px solid var(--border-strong);
+}
+
+/* Scrollable cells */
+.scrollable-cell {
+  min-width: 120px;
+  cursor: pointer;
+}
+
+.id-cell {
+  cursor: default;
+  opacity: 0.7;
+}
+
+/* Editable cell states */
+.editable-cell {
+  transition: all 0.2s ease;
+}
+
+.editable-cell:hover:not(.editing) {
+  background: var(--action-hover);
+  box-shadow: inset 0 0 0 1px var(--border-medium);
+}
+
+.editing {
+  background: var(--background-canvas) !important;
+  box-shadow: inset 0 0 0 2px var(--primary-border) !important;
+}
+
+/* Action icons styling */
+.action-icon {
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  margin: 0 2px;
+}
+
+.edit-icon {
+  color: var(--info-main);
+}
+
+.edit-icon:hover {
+  background: var(--info-main)15;
+  color: var(--info-shade);
+}
+
+.save-icon {
+  color: var(--success-main);
+  display: none;
+}
+
+.save-icon:hover {
+  background: var(--success-main)15;
+  color: var(--success-shade);
+}
+
+.cancel-icon {
+  color: var(--warning-main);
+  display: none;
+}
+
+.cancel-icon:hover {
+  background: var(--warning-main)15;
+  color: var(--warning-shade);
+}
+
+.delete-icon {
+  color: var(--error-main);
+}
+
+.delete-icon:hover {
+  background: var(--error-main)15;
+  color: var(--error-shade);
+}
+
+/* Input field styling for inline editing */
+.inline-input {
+  width: 100%;
+  background: var(--background-canvas);
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  padding: var(--spacing-1);
+  border-radius: var(--border-radius);
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.inline-input:focus {
+  border-color: var(--primary-border);
+  box-shadow: 0 0 0 2px var(--primary-transparent);
+}
+
+/* Row hover effects for frozen columns */
+.row-hover .actions-cell {
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px var(--action-hover), inset 3px 0 0 var(--border-strong);
+}
+
+.row-hover .hostname-cell {
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px var(--action-hover), inset 3px 0 0 var(--border-strong);
+}
+
+.row-hover .ip-cell {
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2), inset 0 0 0 1000px var(--action-hover), inset 3px 0 0 var(--border-strong);
+}
+
+/* Loading spinner for action icons */
+.loading-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Value formatting */
+.null-value {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.timestamp-value {
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .devices-table {
+    font-size: 12px;
+  }
+  
+  .actions-cell,
+  .hostname-cell,
+  .ip-cell {
+    padding: var(--spacing-0-5) var(--spacing-1);
+  }
+  
+  .action-icon {
+    font-size: 12px;
+    padding: 3px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .devices-table {
+    border: 2px solid;
+  }
+  
+  .devices-table td,
+  .devices-table th {
+    border: 1px solid;
+  }
+  
+  .action-icon:hover {
+    background: var(--contrast-hover) !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .table-container {
+    overflow: visible;
+  }
+  
+  .devices-table {
+    width: 100%;
+  }
+  
+  .actions-cell {
+    display: none;
+  }
+  
+  .hostname-cell,
+  .ip-cell {
+    position: static;
+    box-shadow: none;
+  }
+}

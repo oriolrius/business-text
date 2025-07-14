@@ -1,0 +1,90 @@
+<!-- SQLite Device Management Dashboard - Simplified HTML Structure -->
+<!-- This content replaces the large inline HTML in the dashboard configuration -->
+
+<div class="device-management-container">
+  <div class="header-section">
+    <h2 class="header-title">
+      <i class="fas fa-database"></i>
+      SQLite Device Management System
+    </h2>
+    <p class="header-description">
+      Advanced device management with inline editing, CRUD operations, and keyboard navigation.
+      <strong>Adapted for SQLite compatibility.</strong>
+    </p>
+  </div>
+  
+  <div id="devices-table" class="loading-container">
+    <div class="loading-content">
+      <i class="fas fa-spinner fa-spin loading-icon"></i>
+      <div class="loading-title">Loading SQLite device data...</div>
+      <div class="loading-subtitle">Click the button below to load and manage devices</div>
+    </div>
+  </div>
+  
+  <div class="controls-section">
+    <button id="load-devices" class="load-button">
+      <i class="fas fa-sync-alt"></i>
+      Load SQLite Devices
+    </button>
+    
+    <div class="database-info">
+      <i class="fas fa-info-circle"></i>
+      Database: <code>./tmp/devices.db</code>
+    </div>
+  </div>
+  
+  <div class="features-section">
+    <h3 class="features-title">
+      <i class="fas fa-keyboard"></i>
+      Advanced Features
+    </h3>
+    <div class="features-grid">
+      <div class="feature-item">
+        <strong>✏️ Inline Editing:</strong>
+        <ul class="feature-list">
+          <li>Click edit icon or any cell to modify</li>
+          <li>Real-time validation with visual feedback</li>
+          <li>Timestamp format detection</li>
+        </ul>
+      </div>
+      <div class="feature-item">
+        <strong>⌨️ Keyboard Navigation:</strong>
+        <ul class="feature-list">
+          <li><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> - Navigate cells</li>
+          <li><kbd>Enter</kbd> - Next cell or save row</li>
+          <li><kbd>Ctrl+S</kbd> - Save current row</li>
+          <li><kbd>Esc</kbd> - Cancel editing</li>
+        </ul>
+      </div>
+      <div class="feature-item">
+        <strong>💾 CRUD Operations:</strong>
+        <ul class="feature-list">
+          <li>Create, Read, Update, Delete records</li>
+          <li>Individual row save/cancel operations</li>
+          <li>Confirmation dialogs for destructive actions</li>
+        </ul>
+      </div>
+      <div class="feature-item">
+        <strong>🎨 UI Features:</strong>
+        <ul class="feature-list">
+          <li>Frozen columns (hostname, ip_address)</li>
+          <li>Grafana theme integration</li>
+          <li>Smooth animations and transitions</li>
+          <li>Responsive table layout</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="notes-section">
+    <strong class="notes-title">🔧 SQLite Specific Notes:</strong>
+    <ul class="notes-list">
+      <li>Timestamps stored as Unix epoch integers</li>
+      <li>Boolean values stored as 1/0 (SQLite standard)</li>
+      <li>String escaping uses SQLite double-quote syntax</li>
+      <li>Auto-detection of ID fields (id, *_id, uid, etc.)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Font Awesome CSS is now loaded via the Business Text panel's externalStyles option -->

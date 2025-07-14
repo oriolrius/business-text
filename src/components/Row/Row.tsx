@@ -11,7 +11,7 @@ import { getAppEvents, locationService } from '@grafana/runtime';
 import { TimeZone } from '@grafana/schema';
 import { useTheme2 } from '@grafana/ui';
 import { useDashboardRefresh } from '@volkovlabs/components';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { TEST_IDS } from '../../constants';
 import { PanelOptions, RowItem } from '../../types';
@@ -21,6 +21,7 @@ import {
   createExecutionCode,
   createNotificationContext,
 } from '../../utils';
+import { fetchHtmlViaBackend } from '../../utils/partials';
 
 /**
  * Properties
@@ -81,6 +82,13 @@ export interface Props {
    * @type {PanelOptions}
    */
   options: PanelOptions;
+
+  /**
+   * Options change callback
+   *
+   * @type {Function}
+   */
+  onOptionsChange?: (options: PanelOptions) => void;
 }
 
 /**
@@ -95,6 +103,7 @@ export const Row: React.FC<Props> = ({
   timeRange,
   timeZone,
   options,
+  onOptionsChange,
 }) => {
   /**
    * Row Ref
@@ -132,11 +141,53 @@ export const Row: React.FC<Props> = ({
   const functionThis = useRef({});
 
   /**
+   * Remote content state
+   */
+  const [remoteAfterRender, setRemoteAfterRender] = useState<string | null>(null);
+  const [isLoadingRemote, setIsLoadingRemote] = useState(false);
+
+  /**
+   * Fetch remote afterRender content when needed
+   */
+  useEffect(() => {
+    const shouldFetchRemote = !afterRender && options.afterRenderRemoteUrl;
+    
+    if (shouldFetchRemote && !isLoadingRemote) {
+      setIsLoadingRemote(true);
+      
+      fetchHtmlViaBackend(replaceVariables(options.afterRenderRemoteUrl), 'afterRender')
+        .then((result) => {
+          setRemoteAfterRender(result.content);
+          setIsLoadingRemote(false);
+          
+          // Update the afterRender field with the fetched content
+          if (onOptionsChange) {
+            onOptionsChange({
+              ...options,
+              afterRender: result.content,
+            });
+          }
+        })
+        .catch((error) => {
+          notifyError([`Failed to fetch remote afterRender from ${options.afterRenderRemoteUrl}: ${error.message}`]);
+          setIsLoadingRemote(false);
+        });
+    } else if (afterRender) {
+      // Clear remote content when local content is available
+      setRemoteAfterRender(null);
+    }
+  }, [afterRender, options.afterRenderRemoteUrl, replaceVariables, notifyError, isLoadingRemote, onOptionsChange, options]);
+
+  /**
    * Run After Render Function
    */
   useEffect(() => {
     let unsubscribe: unknown = null;
-    if (ref.current && afterRender) {
+    
+    // Use remote content if afterRender is empty but remote content is available
+    const effectiveAfterRender = afterRender || remoteAfterRender;
+    
+    if (ref.current && effectiveAfterRender) {
       /**
        * Create notification context
        */
@@ -152,7 +203,7 @@ export const Row: React.FC<Props> = ({
         options.dataSource
       );
 
-      const func = createExecutionCode('context', afterRender);
+      const func = createExecutionCode('context', effectiveAfterRender);
 
       const result = func.call(
         functionThis.current,
@@ -199,6 +250,7 @@ export const Row: React.FC<Props> = ({
     };
   }, [
     afterRender,
+    remoteAfterRender,
     eventBus,
     item.data,
     item.dataFrame,

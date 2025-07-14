@@ -28,6 +28,7 @@ export const TextPanel: React.FC<Props> = ({
   timeZone,
   eventBus,
   replaceVariables,
+  onOptionsChange,
 }) => {
   /**
    * States
@@ -150,6 +151,7 @@ export const TextPanel: React.FC<Props> = ({
           replaceVariables={replaceVariables}
           eventBus={eventBus}
           data={data}
+          onOptionsChange={onOptionsChange}
         />
       </div>
 

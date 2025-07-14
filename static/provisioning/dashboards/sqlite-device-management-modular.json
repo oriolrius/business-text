@@ -1,0 +1,131 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "type": "volkovlabs-text-panel",
+      "title": "SQLite Device Management - External JS Demo",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "h": 20,
+        "w": 24
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "pluginVersion": "6.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "marcusolsson-static-datasource",
+            "uid": "U0HP2Rv4z"
+          },
+          "frame": {
+            "fields": [
+              {
+                "config": {},
+                "name": "static",
+                "type": "string",
+                "values": [
+                  "data"
+                ]
+              }
+            ],
+            "meta": {}
+          },
+          "refId": "A"
+        }
+      ],
+      "datasource": {
+        "type": "marcusolsson-static-datasource",
+        "uid": "U0HP2Rv4z"
+      },
+      "options": {
+        "renderMode": "data",
+        "editors": [
+          "content",
+          "afterRender",
+          "styles"
+        ],
+        "editor": {
+          "language": "html",
+          "format": "auto"
+        },
+        "wrap": true,
+        "contentPartials": [],
+        "content": "<\\!-- SQLite Device Management Dashboard - Modular Version -->\n<div style=\"padding: 20px; font-family: 'Inter', sans-serif;\">\n  <div style=\"margin-bottom: 20px; padding: 15px; background: var(--background-secondary); border-radius: 8px; border-left: 4px solid var(--primary-color);\">\n    <h2 style=\"color: var(--text-primary); margin: 0 0 10px 0; display: flex; align-items: center;\">\n      <i class=\"fas fa-database\" style=\"margin-right: 12px; color: var(--primary-color);\"></i>\n      SQLite Device Management System - External JS Architecture\n    </h2>\n    <p style=\"color: var(--text-secondary); margin: 5px 0; font-size: 14px;\">\n      Advanced device management with inline editing, CRUD operations, and keyboard navigation.\n      <strong>Adapted for SQLite compatibility.</strong><br/>\n      <em style=\"color: var(--info-color);\">\ud83d\udd27 This version uses external JavaScript loading via Business Text plugin's native afterRenderRemoteUrl.</em>\n    </p>\n  </div>\n  \n  <div id=\"devices-table\" style=\"\n    background: var(--background-secondary);\n    border: 1px solid var(--border-medium);\n    border-radius: 8px;\n    min-height: 400px;\n    overflow: hidden;\n  \">\n    <div style=\"text-align: center; padding: 60px 20px; color: var(--text-secondary);\">\n      <i class=\"fas fa-spinner fa-spin\" style=\"font-size: 32px; margin-bottom: 15px; color: var(--primary-color);\"></i>\n      <div style=\"font-size: 16px; margin-bottom: 10px;\">Loading SQLite device data...</div>\n      <div style=\"font-size: 14px; opacity: 0.8;\">Click the button below to load and manage devices</div>\n    </div>\n  </div>\n  \n  <div style=\"margin-top: 20px; display: flex; gap: 15px; align-items: center; justify-content: space-between;\">\n    <button id=\"load-devices\" style=\"\n      background: linear-gradient(135deg, var(--primary-color), var(--primary-color)dd);\n      color: var(--primary-text-color);\n      border: none;\n      padding: 12px 24px;\n      border-radius: 8px;\n      font-weight: 600;\n      cursor: pointer;\n      transition: all 0.3s ease;\n      font-size: 14px;\n      box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n      display: flex;\n      align-items: center;\n      gap: 8px;\n    \" onmouseover=\"this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'\">\n      <i class=\"fas fa-sync-alt\"></i>\n      Load SQLite Devices\n    </button>\n    \n    <div style=\"font-size: 12px; color: var(--text-secondary);\">\n      <i class=\"fas fa-info-circle\" style=\"margin-right: 5px;\"></i>\n      Database: <code style=\"background: var(--background-canvas); padding: 2px 6px; border-radius: 3px;\">./tmp/devices.db</code>\n    </div>\n  </div>\n  \n  <div style=\"margin-top: 25px; padding: 20px; background: var(--background-canvas); border-radius: 8px; border: 1px solid var(--border-weak);\">\n    <h3 style=\"color: var(--text-primary); margin: 0 0 15px 0; font-size: 16px; display: flex; align-items: center;\">\n      <i class=\"fas fa-keyboard\" style=\"margin-right: 8px; color: var(--success-color);\"></i>\n      Advanced Features\n    </h3>\n    <div style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; font-size: 13px;\">\n      <div>\n        <strong style=\"color: var(--text-primary);\">\u270f\ufe0f Inline Editing:</strong>\n        <ul style=\"margin: 5px 0; padding-left: 20px; color: var(--text-secondary);\">\n          <li>Click edit icon or any cell to modify</li>\n          <li>Real-time validation with visual feedback</li>\n          <li>Timestamp format detection</li>\n        </ul>\n      </div>\n      <div>\n        <strong style=\"color: var(--text-primary);\">\u2328\ufe0f Keyboard Navigation:</strong>\n        <ul style=\"margin: 5px 0; padding-left: 20px; color: var(--text-secondary);\">\n          <li><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> - Navigate cells</li>\n          <li><kbd>Enter</kbd> - Next cell or save row</li>\n          <li><kbd>Ctrl+S</kbd> - Save current row</li>\n          <li><kbd>Esc</kbd> - Cancel editing</li>\n        </ul>\n      </div>\n      <div>\n        <strong style=\"color: var(--text-primary);\">\ud83d\udcbe CRUD Operations:</strong>\n        <ul style=\"margin: 5px 0; padding-left: 20px; color: var(--text-secondary);\">\n          <li>Create, Read, Update, Delete records</li>\n          <li>Individual row save/cancel operations</li>\n          <li>Confirmation dialogs for destructive actions</li>\n        </ul>\n      </div>\n      <div>\n        <strong style=\"color: var(--text-primary);\">\ud83c\udfa8 UI Features:</strong>\n        <ul style=\"margin: 5px 0; padding-left: 20px; color: var(--text-secondary);\">\n          <li>Frozen columns (hostname, ip_address)</li>\n          <li>Grafana theme integration</li>\n          <li>Smooth animations and transitions</li>\n          <li>Responsive table layout</li>\n        </ul>\n      </div>\n    </div>\n  </div>\n  \n  <div style=\"margin-top: 20px; padding: 15px; background: var(--success-color)20; border-radius: 6px; border-left: 4px solid var(--success-color); font-size: 13px;\">\n    <strong style=\"color: var(--success-text);\">\ud83d\udce6 Modular Architecture Benefits:</strong>\n    <ul style=\"margin: 8px 0; padding-left: 20px; color: var(--success-text);\">\n      <li>External JavaScript file for better maintainability</li>\n      <li>Single external JS file via afterRenderRemoteUrl</li>\n      <li>FontAwesome loaded through externalStyles</li>\n      <li>Graceful fallback system with error handling</li>\n    </ul>\n  </div>\n  \n  <div style=\"margin-top: 20px; padding: 15px; background: var(--warning-color)20; border-radius: 6px; border-left: 4px solid var(--warning-color); font-size: 13px;\">\n    <strong style=\"color: var(--warning-text);\">\ud83d\udd27 SQLite Specific Notes:</strong>\n    <ul style=\"margin: 8px 0; padding-left: 20px; color: var(--warning-text);\">\n      <li>Timestamps stored as Unix epoch integers</li>\n      <li>Boolean values stored as 1/0 (SQLite standard)</li>\n      <li>String escaping uses SQLite double-quote syntax</li>\n      <li>Auto-detection of ID fields (id, *_id, uid, etc.)</li>\n    </ul>\n  </div>\n</div>",
+        "defaultContent": "The query didn't return any results.",
+        "helpersRemoteUrl": "",
+        "helpers": "",
+        "afterRenderRemoteUrl": "http://static/sqlite-device-management.js",
+        "afterRender": "",
+        "externalStyles": [
+          "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        ],
+        "stylesRemoteUrl": "",
+        "styles": "",
+        "dataSource": {
+          "enableDataSourceQueries": true,
+          "queryTimeout": 30000,
+          "showQueryErrors": true
+        }
+      }
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [
+    "sqlite",
+    "device-management",
+    "crud"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "SQLite Device Management (External JS Architecture)",
+  "uid": "sqlite_device_management_modular",
+  "version": 2
+}

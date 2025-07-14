@@ -1,0 +1,247 @@
+/* SQLite Device Management - Core Styles */
+/* Extracted from inline styles for maintainability */
+
+/* Keyboard key styling */
+kbd {
+  background: var(--background-canvas);
+  border: 1px solid var(--border-medium);
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 2px 0 0 rgba(255,255,255,0.7) inset;
+  color: var(--text-primary);
+  display: inline-block;
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
+/* Main container */
+.device-management-container {
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header section */
+.header-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: var(--background-secondary);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.header-title {
+  color: var(--text-primary);
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.header-title i {
+  margin-right: 12px;
+  color: var(--primary-color);
+}
+
+.header-description {
+  color: var(--text-secondary);
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* Loading state */
+.loading-container {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.loading-content {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+.loading-icon {
+  font-size: 32px;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+}
+
+.loading-title {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.loading-subtitle {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Control buttons section */
+.controls-section {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.load-button {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-color)dd);
+  color: var(--primary-text-color);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.load-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.database-info {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.database-info i {
+  margin-right: 5px;
+}
+
+.database-info code {
+  background: var(--background-canvas);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+/* Features section */
+.features-section {
+  margin-top: 25px;
+  padding: 20px;
+  background: var(--background-canvas);
+  border-radius: 8px;
+  border: 1px solid var(--border-weak);
+}
+
+.features-title {
+  color: var(--text-primary);
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.features-title i {
+  margin-right: 8px;
+  color: var(--success-color);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  font-size: 13px;
+}
+
+.feature-item strong {
+  color: var(--text-primary);
+}
+
+.feature-list {
+  margin: 5px 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+}
+
+/* Notes section */
+.notes-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: var(--warning-color)20;
+  border-radius: 6px;
+  border-left: 4px solid var(--warning-color);
+  font-size: 13px;
+}
+
+.notes-title {
+  color: var(--warning-text);
+}
+
+.notes-list {
+  margin: 8px 0;
+  padding-left: 20px;
+  color: var(--warning-text);
+}
+
+/* Error states */
+.error-container {
+  padding: 20px;
+  background: var(--error-main)15;
+  border: 1px solid var(--error-main);
+  border-radius: 8px;
+  color: var(--error-text);
+  font-family: var(--font-family);
+}
+
+/* Input validation states */
+.input-error {
+  border-color: var(--error-border) !important;
+  box-shadow: 0 0 0 2px var(--error-transparent) !important;
+}
+
+.input-warning {
+  border-color: var(--warning-border) !important;
+  box-shadow: 0 0 0 2px var(--warning-transparent) !important;
+}
+
+.input-success {
+  border-color: var(--success-border) !important;
+  box-shadow: 0 0 0 2px var(--success-transparent) !important;
+}
+
+/* Utility classes */
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: block !important;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.fade-out {
+  animation: fadeOut 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Transitions */
+.smooth-transition {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}

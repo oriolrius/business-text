@@ -74,6 +74,13 @@ interface Props {
    * @type {PanelData}
    */
   data: PanelData;
+
+  /**
+   * Options change callback
+   *
+   * @type {Function}
+   */
+  onOptionsChange?: (options: PanelOptions) => void;
 }
 
 /**
@@ -87,6 +94,7 @@ export const Text: React.FC<Props> = ({
   replaceVariables,
   eventBus,
   data: panelData,
+  onOptionsChange,
 }) => {
   /**
    * Generated rows
@@ -342,6 +350,7 @@ export const Text: React.FC<Props> = ({
           timeZone={timeZone}
           replaceVariables={replaceVariables}
           options={options}
+          onOptionsChange={onOptionsChange}
         />
       ))}
     </>
