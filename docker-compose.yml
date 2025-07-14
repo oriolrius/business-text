@@ -1,4 +1,11 @@
 services:
+  static:
+    image: kugland/darkhttpd:latest
+    volumes:
+      - ./example:/www:ro
+    profiles:
+      - dev
+
   grafana:
     image: ghcr.io/volkovlabs/app:latest
     entrypoint: /run.sh

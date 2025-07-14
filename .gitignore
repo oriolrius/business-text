@@ -2,6 +2,9 @@
 logs
 *.log
 npm-debug.log*
+*.db
+
+tmp/
 
 node_modules/
 
