@@ -3,6 +3,7 @@ import { Field, FieldConfigProperty, FieldType, PanelPlugin } from '@grafana/dat
 import {
   AfterRenderWithUrlEditor,
   ContentPartialsEditor,
+  ExternalScriptsEditor,
   HelpersWithUrlEditor,
   ResourcesEditor,
   StylesWithUrlEditor,
@@ -154,6 +155,15 @@ export const plugin = new PanelPlugin<PanelOptions>(TextPanel)
         editor: HelpersWithUrlEditor,
         category: ['JavaScript'],
         showIf: (config) => config.editors.includes(EditorType.HELPERS) || config.helpers !== DEFAULT_OPTIONS.helpers,
+      })
+      .addCustomEditor({
+        id: 'externalScripts',
+        path: 'externalScripts',
+        name: 'External JavaScript Libraries',
+        description: 'JavaScript files to load before "After Content Ready" script.',
+        defaultValue: DEFAULT_OPTIONS.externalScripts,
+        editor: ExternalScriptsEditor,
+        category: ['JavaScript'],
       })
       .addTextInput({
         path: 'afterRenderRemoteUrl',

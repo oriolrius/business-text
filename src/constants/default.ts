@@ -12,6 +12,7 @@ export const DEFAULT_OPTIONS: PanelOptions = {
   editors: [],
   renderMode: RenderMode.EVERY_ROW,
   externalStyles: [],
+  externalScripts: [],
   contentPartials: [],
   helpers: '',
   helpersRemoteUrl: '',

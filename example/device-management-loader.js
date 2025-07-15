@@ -171,7 +171,7 @@ async function loadDeviceManagementComponents() {
 
     // Also try to show notification if Grafana context is available
     if (window.context && window.context.grafana && window.context.grafana.notifyError) {
-      window.context.grafana.notifyError('Failed to load modular components: ' + error.message);
+      window.context.grafana.notifyError(['Load Error', 'Failed to load modular components: ' + error.message]);
     }
   }
 }

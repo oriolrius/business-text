@@ -118,6 +118,13 @@ export const getMigratedOptions = (panel: PanelModel<OutdatedPanelOptions & Pane
   }
 
   /**
+   * Add default external scripts if missing
+   */
+  if (!actualOptions.externalScripts) {
+    actualOptions.externalScripts = [];
+  }
+
+  /**
    * Normalize every row
    */
   if (everyRow !== undefined) {

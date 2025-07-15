@@ -95,6 +95,7 @@ describe('Panel', () => {
     stylesRemoteUrl: '',
     status: '',
     externalStyles: [],
+    externalScripts: [],
     contentPartials: [],
     wrap: false,
     afterRender: '',

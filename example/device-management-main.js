@@ -83,7 +83,7 @@ async function initializeDeviceManagement() {
 
     // Also try to show notification if Grafana context is available
     if (window.context && window.context.grafana && window.context.grafana.notifyError) {
-      window.context.grafana.notifyError('Device Management initialization failed: ' + error.message);
+      window.context.grafana.notifyError(['Initialization Error', 'Device Management initialization failed: ' + error.message]);
     }
   }
 }

@@ -125,6 +125,13 @@ export interface PanelOptions {
   afterRender: string;
 
   /**
+   * External JavaScript Libraries
+   *
+   * @type {Resource[]}
+   */
+  externalScripts: Resource[];
+
+  /**
    * Content Partials
    *
    * @type {PartialItemConfig[]}

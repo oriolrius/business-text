@@ -330,10 +330,10 @@ DM.notify = function(type, message) {
   if (window.context && window.context.grafana) {
     switch (type) {
       case 'success':
-        window.context.grafana.notifySuccess(message);
+        window.context.grafana.notifySuccess(['Success', message]);
         break;
       case 'error':
-        window.context.grafana.notifyError(message);
+        window.context.grafana.notifyError(['Error', message]);
         break;
       case 'warning':
         window.context.grafana.notifyWarning && window.context.grafana.notifyWarning(message);

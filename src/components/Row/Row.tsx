@@ -147,6 +147,43 @@ export const Row: React.FC<Props> = ({
   const [isLoadingRemote, setIsLoadingRemote] = useState(false);
 
   /**
+   * External scripts content
+   */
+  const [externalScriptsContent, setExternalScriptsContent] = useState<string[]>([]);
+  const [scriptsLoaded, setScriptsLoaded] = useState(false);
+
+  /**
+   * Fetch external scripts via backend
+   */
+  useEffect(() => {
+    const fetchExternalScripts = async () => {
+      const scripts = options.externalScripts || [];
+      if (scripts.length === 0) {
+        setScriptsLoaded(true);
+        return;
+      }
+
+      try {
+        const scriptContents = await Promise.all(
+          scripts.map(async (script) => {
+            const url = replaceVariables(script.url);
+            const result = await fetchHtmlViaBackend(url, `script-${script.id}`);
+            return result.content;
+          })
+        );
+        
+        setExternalScriptsContent(scriptContents);
+        setScriptsLoaded(true);
+      } catch (error) {
+        notifyError([`Failed to fetch external scripts: ${error instanceof Error ? error.message : String(error)}`]);
+        setScriptsLoaded(true); // Set to true even on error to allow afterRender to run
+      }
+    };
+
+    fetchExternalScripts();
+  }, [options.externalScripts, replaceVariables, notifyError]);
+
+  /**
    * Fetch remote afterRender content when needed
    */
   useEffect(() => {
@@ -187,7 +224,8 @@ export const Row: React.FC<Props> = ({
     // Use remote content if afterRender is empty but remote content is available
     const effectiveAfterRender = afterRender || remoteAfterRender;
     
-    if (ref.current && effectiveAfterRender) {
+    // Wait for external scripts to load before running afterRender
+    if (ref.current && effectiveAfterRender && scriptsLoaded) {
       /**
        * Create notification context
        */
@@ -203,6 +241,39 @@ export const Row: React.FC<Props> = ({
         options.dataSource
       );
 
+      // Execute external scripts first
+      try {
+        externalScriptsContent.forEach((scriptContent) => {
+          const scriptFunc = createExecutionCode('context', scriptContent);
+          scriptFunc.call(
+            functionThis.current,
+            afterRenderCodeParameters.create({
+              element: ref.current!,
+              data: item.data,
+              panelData: item.panelData,
+              dataFrame: item.dataFrame,
+              dataSource: dataSourceContext,
+              notify: notificationContext,
+              grafana: {
+                theme,
+                notifySuccess,
+                notifyError,
+                timeRange,
+                timeZone,
+                getLocale,
+                replaceVariables,
+                eventBus,
+                locationService,
+                refresh: () => refreshDashboard(),
+              },
+            })
+          );
+        });
+      } catch (error) {
+        notifyError([`Error executing external script: ${error instanceof Error ? error.message : String(error)}`]);
+      }
+
+      // Execute the main afterRender function
       const func = createExecutionCode('context', effectiveAfterRender);
 
       const result = func.call(
@@ -252,6 +323,7 @@ export const Row: React.FC<Props> = ({
     afterRender,
     remoteAfterRender,
     eventBus,
+    externalScriptsContent,
     item.data,
     item.dataFrame,
     item.panelData,
@@ -259,6 +331,7 @@ export const Row: React.FC<Props> = ({
     notifySuccess,
     refreshDashboard,
     replaceVariables,
+    scriptsLoaded,
     theme,
     timeRange,
     timeZone,
