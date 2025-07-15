@@ -1,4 +1,4 @@
-console.log('loading lib.js');
+console.debug('start: lib.js');
 
 // SQLite Device Management - Complete Original Code
 // This is the EXACT same code from the original dashboard, just moved to an external file
@@ -1096,4 +1096,4 @@ window.initializeDeviceManagement = function() {
   console.log('✅ Device Management initialized, button ready');
 };
 
-console.log('END: lib.js');
+console.debug('end: lib.js');

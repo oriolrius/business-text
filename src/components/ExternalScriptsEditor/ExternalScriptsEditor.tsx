@@ -26,11 +26,29 @@ export const ExternalScriptsEditor: React.FC<Props> = ({ value = [], onChange, c
   const currentUrlsText = value?.map(resource => resource.url).join('\n') || '';
 
   /**
-   * Handle text change
+   * Local state for text area value
+   */
+  const [localText, setLocalText] = React.useState(currentUrlsText);
+
+  /**
+   * Update local text when value prop changes
+   */
+  React.useEffect(() => {
+    setLocalText(currentUrlsText);
+  }, [currentUrlsText]);
+
+  /**
+   * Handle text change (only updates local state)
    */
   const onTextChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = event.currentTarget.value;
-    const urls = text
+    setLocalText(event.currentTarget.value);
+  }, []);
+
+  /**
+   * Handle blur - save changes when user loses focus
+   */
+  const onBlur = useCallback(() => {
+    const urls = localText
       .split('\n')
       .map(url => url.trim())
       .filter(url => url.length > 0);
@@ -41,10 +59,10 @@ export const ExternalScriptsEditor: React.FC<Props> = ({ value = [], onChange, c
     }));
     
     onChange(resources);
-  }, [onChange]);
+  }, [localText, onChange]);
 
   /**
-   * Replace variables in URLs
+   * Replace variables in URLs for preview
    */
   const { replaceVariables } = context;
   const processedUrls = value?.map(resource => replaceVariables(resource.url)).join('\n') || '';
@@ -76,14 +94,15 @@ export const ExternalScriptsEditor: React.FC<Props> = ({ value = [], onChange, c
       </Alert>
       
       <TextArea
-        value={currentUrlsText}
+        value={localText}
         onChange={onTextChange}
+        onBlur={onBlur}
         placeholder="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js&#10;https://example.com/my-library.js"
         rows={8}
         className={styles.textarea}
       />
       
-      {processedUrls !== currentUrlsText && (
+      {value && value.length > 0 && processedUrls !== currentUrlsText && (
         <div className={styles.preview}>
           <strong>URLs after variable replacement:</strong>
           <pre>{processedUrls}</pre>

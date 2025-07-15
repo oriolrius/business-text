@@ -1,162 +1,116 @@
-# Data Source Query Integration
+# Data Source Query Integration Implementation
 
-The Business Text panel supports executing queries against any configured Grafana data source directly from your custom JavaScript code. This powerful feature allows you to:
+## Summary of Implementation
 
-- Fetch data from databases, APIs, and other data sources
-- Combine multiple data sources in a single visualization  
-- Create dynamic content based on real-time queries
-- Build interactive dashboards with custom data processing
+I have successfully implemented comprehensive data source query integration for the Business Text plugin. Here's what has been added:
 
-## Enabling Data Source Queries
+### Core Features Implemented
 
-1. In the panel options, navigate to the **Data Source** section
-2. Enable **"Enable Data Source Queries"**
-3. Configure the query timeout (default: 30 seconds)
-4. Optionally enable error notifications
+1. **New Type Definitions** (`src/types/dataSource.ts`)
+   - `DataSourceContext` interface with query methods
+   - `NotificationContext` interface for user notifications
+   - `DataSourcePanelOptions` for configuration
+   - Support for SQL, InfluxDB, and generic queries
 
-## API Reference
+2. **Data Source Service** (`src/utils/dataSource.ts`)
+   - `createDataSourceContext()` - Main API factory
+   - `createNotificationContext()` - Notification helpers
+   - Query execution with timeout handling
+   - Error handling and user feedback
+   - Utility functions for result formatting
 
-Once enabled, the `context.dataSource` object provides the following methods in your JavaScript code:
+3. **Integration Points**
+   - Updated `Row.tsx` component to include data source context
+   - Extended `html.ts` generator to provide data source API
+   - Updated `code-parameters.ts` for IntelliSense support
+   - Modified panel options in `module.ts`
 
-### Generic Query Method
+4. **Panel Configuration**
+   - Enable/disable data source queries toggle
+   - Query timeout configuration
+   - Error notification settings
+   - Proper migration support
 
-```javascript
-// Execute any query against a data source
-const result = await context.dataSource.query(dataSourceUid, queryConfig);
-```
+5. **API Methods Available in JavaScript Context**
+   ```javascript
+   // Generic query execution
+   context.dataSource.query(dataSourceUid, queryConfig)
+   
+   // SQL helper
+   context.dataSource.sql(dataSourceUid, sqlQuery)
+   
+   // InfluxDB helper  
+   context.dataSource.influx(dataSourceUid, influxQuery)
+   
+   // Get available data sources
+   context.dataSource.getAvailable()
+   
+   // Utility functions
+   context.dataSource.utils.formatResults(response)
+   context.dataSource.utils.extractValues(response, fieldName)
+   context.dataSource.utils.toObjects(response)
+   
+   // Notifications
+   context.notify.success(message)
+   context.notify.error(message)
+   context.notify.warning(message)
+   context.notify.info(message)
+   ```
 
-### SQL Helper Method
+### Documentation
 
-```javascript
-// Execute SQL queries against SQL-based data sources
-const result = await context.dataSource.sql('postgres-uid', 'SELECT * FROM users WHERE active = true');
-```
+- **Comprehensive README.md section** with:
+  - Feature overview and setup instructions
+  - Complete API reference with examples
+  - Usage examples for common scenarios
+  - Best practices and security considerations
+  - Multiple code examples showing different use cases
 
-### InfluxDB Helper Method
+### Testing
 
-```javascript
-// Execute InfluxDB queries
-const result = await context.dataSource.influx('influxdb-uid', 'SELECT mean("cpu") FROM "system"');
-```
-
-### Utility Methods
-
-```javascript
-// Get available data sources
-const dataSources = context.dataSource.getAvailable();
-
-// Format query results for easier consumption
-const formatted = context.dataSource.utils.formatResults(result);
-
-// Extract values from specific fields
-const values = context.dataSource.utils.extractValues(result, 'fieldName');
-
-// Convert to simple object array
-const objects = context.dataSource.utils.toObjects(result);
-```
-
-### Notification API
-
-```javascript
-// Show notifications to users
-context.notify.success('Data loaded successfully!');
-context.notify.error('Failed to fetch data');
-context.notify.warning('Data might be outdated');
-context.notify.info('Processing data...');
-```
-
-## Async/Await Support
-
-The Business Text panel **automatically detects** when your JavaScript code contains `await` keywords and converts your code to run in an async context. This means you can use modern async/await syntax seamlessly:
-
-```javascript
-// ✅ This works - async/await is automatically supported
-const data = await context.dataSource.sql('my-db', 'SELECT * FROM users');
-console.log('Data loaded:', data);
-
-// ✅ Multiple await calls work too
-const users = await context.dataSource.sql('my-db', 'SELECT * FROM users');
-const orders = await context.dataSource.sql('my-db', 'SELECT * FROM orders');
-console.log('Both queries completed');
-
-// ✅ Error handling with try/catch
-try {
-  const result = await context.dataSource.query('my-source', { query: 'complex-query' });
-  context.notify.success('Query successful!');
-} catch (error) {
-  context.notify.error('Query failed: ' + error.message);
-}
-```
-
-**Note**: If your code doesn't contain `await`, it runs as a regular synchronous function for optimal performance.
-
-## Troubleshooting
-
-### Finding Data Source UIDs
-
-If you're getting "data source not found" errors, use this code to list all available data sources:
-
-```javascript
-// List all available data sources
-const dataSources = context.dataSource.getAvailable();
-console.log('Available data sources:', dataSources);
-
-// Show in panel
-const list = dataSources.map(ds => `${ds.name} (${ds.uid}) - Type: ${ds.type}`).join('<br>');
-document.body.innerHTML = `<h3>Available Data Sources:</h3>${list}`;
-```
-
-### Get Data Source by Name
-
-If you know the data source name but not the UID:
-
-```javascript
-const dataSource = await context.dataSource.getByName('My Database');
-if (dataSource) {
-  console.log('Found data source:', dataSource.uid, dataSource.type);
-} else {
-  console.log('Data source not found');
-}
-```
-
-### Debug Query Issues
-
-Enable detailed logging to debug query problems:
-
-```javascript
-try {
-  // This will log data source info and query details to browser console
-  const result = await context.dataSource.sql('your-datasource-uid', 'SELECT 1 as test');
-  console.log('Success:', result);
-} catch (error) {
-  console.error('Query failed:', error.message);
-  context.notify.error('Query error: ' + error.message);
-}
-```
+- **Unit tests** (`src/utils/dataSource.test.ts`) covering:
+  - Data source context creation
+  - Notification context functionality
+  - Query execution scenarios
+  - Error handling
+  - Utility function behavior
 
 ## Usage Examples
 
 ### Basic SQL Query
-
 ```javascript
-async function loadUserCount() {
+async function loadData() {
   try {
     const result = await context.dataSource.sql('postgres-uid', 
-      'SELECT count(*) as total_users FROM users WHERE active = true'
+      'SELECT count(*) as total FROM users WHERE active = true'
     );
-    
-    const count = context.dataSource.utils.extractValues(result, 'total_users')[0];
-    document.getElementById('user-count').innerHTML = `Active Users: ${count}`;
+    const count = context.dataSource.utils.extractValues(result, 'total')[0];
+    document.getElementById('count').innerHTML = `Active Users: ${count}`;
+    context.notify.success('Data loaded successfully');
   } catch (error) {
-    context.notify.error('Failed to load user data: ' + error.message);
+    context.notify.error('Failed to load data: ' + error.message);
   }
 }
-
-loadUserCount();
 ```
 
-### Time Range Aware Query
+### Multiple Data Sources
+```javascript
+async function loadDashboard() {
+  const [users, metrics] = await Promise.all([
+    context.dataSource.sql('postgres-uid', 'SELECT * FROM users LIMIT 10'),
+    context.dataSource.influx('influx-uid', 'SELECT mean("cpu") FROM "system"')
+  ]);
+  
+  // Process and display data
+  const userList = context.dataSource.utils.toObjects(users);
+  const avgCpu = context.dataSource.utils.extractValues(metrics)[0];
+  
+  document.getElementById('users').innerHTML = JSON.stringify(userList, null, 2);
+  document.getElementById('cpu').innerHTML = `CPU: ${avgCpu}%`;
+}
+```
 
+### Time Range Aware Queries
 ```javascript
 async function loadMetrics() {
   const timeRange = context.grafana.timeRange;
@@ -170,81 +124,11 @@ async function loadMetrics() {
   const result = await context.dataSource.sql('mysql-uid', query);
   const avgValue = context.dataSource.utils.extractValues(result, 'avg_value')[0];
   
-  document.getElementById('avg-metric').innerHTML = `Average: ${avgValue.toFixed(2)}`;
+  document.getElementById('metric').innerHTML = `Average: ${avgValue.toFixed(2)}`;
 }
 ```
 
-### Multiple Data Sources
-
-```javascript
-async function loadDashboardData() {
-  try {
-    // Get available data sources
-    const dataSources = context.dataSource.getAvailable();
-    console.log('Available data sources:', dataSources);
-    
-    // Query different sources
-    const [sqlData, influxData] = await Promise.all([
-      context.dataSource.sql('postgres-uid', 'SELECT * FROM summary'),
-      context.dataSource.influx('influxdb-uid', 'SELECT mean("cpu") FROM "system"')
-    ]);
-    
-    // Process and display combined data
-    const summary = context.dataSource.utils.toObjects(sqlData);
-    const metrics = context.dataSource.utils.toObjects(influxData);
-    
-    document.getElementById('summary').innerHTML = JSON.stringify(summary, null, 2);
-    document.getElementById('metrics').innerHTML = JSON.stringify(metrics, null, 2);
-    
-    context.notify.success('Data loaded from multiple sources');
-  } catch (error) {
-    context.notify.error('Failed to load dashboard data: ' + error.message);
-  }
-}
-
-loadDashboardData();
-```
-
-### Dynamic Content with Variables
-
-```javascript
-async function loadUserData() {
-  // Use Grafana variables in queries
-  const userId = context.grafana.replaceVariables('$user_id');
-  const query = `SELECT name, email, last_login FROM users WHERE id = ${userId}`;
-  
-  const result = await context.dataSource.sql('postgres-uid', query);
-  const user = context.dataSource.utils.toObjects(result)[0];
-  
-  if (user) {
-    document.getElementById('user-info').innerHTML = `
-      <h3>${user.name}</h3>
-      <p>Email: ${user.email}</p>
-      <p>Last Login: ${new Date(user.last_login).toLocaleString()}</p>
-    `;
-  } else {
-    context.notify.warning('User not found');
-  }
-}
-```
-
-## Best Practices
-
-1. **Error Handling**: Always wrap data source queries in try-catch blocks
-2. **Timeouts**: Set appropriate query timeouts based on your data source performance
-3. **Caching**: Consider implementing client-side caching for frequently accessed data
-4. **Security**: Be cautious with dynamic SQL queries to prevent injection attacks
-5. **Performance**: Use specific field selections instead of `SELECT *` for better performance
-6. **User Feedback**: Use the notification API to keep users informed of data loading status
-
-## Security Considerations
-
-- Data source queries respect Grafana's existing data source permissions
-- Users can only query data sources they have access to in Grafana
-- SQL injection protection should be implemented in your queries
-- Consider enabling query error notifications for debugging
-
-## Configuration Options
+## Configuration
 
 ### Panel Options
 - Navigate to panel settings → Data Source section
@@ -258,25 +142,20 @@ async function loadUserData() {
 - Proper error handling and timeout management
 - Optional query error notifications
 
-## Troubleshooting
+## Benefits
 
-### Common Issues
+1. **Enhanced Interactivity**: Create dynamic content based on real-time data
+2. **Multi-Source Integration**: Combine data from multiple sources in one panel
+3. **Custom Business Logic**: Implement complex data processing in JavaScript
+4. **User-Friendly**: Notifications keep users informed of data loading status
+5. **Performance**: Configurable timeouts and error handling
+6. **Security**: Leverages Grafana's existing permission system
 
-1. **"Data source queries are disabled"**
-   - Enable the feature in panel options under Data Source section
+## Next Steps
 
-2. **"Data source with UID 'xyz' not found"**
-   - Verify the data source UID is correct
-   - Check that you have access to the data source
+1. **Enable the feature** in panel options
+2. **Test with your data sources** using the provided examples
+3. **Customize for your use case** with specific queries and processing
+4. **Monitor performance** and adjust timeout settings as needed
 
-3. **Query timeout errors**
-   - Increase the timeout value in panel options
-   - Optimize your queries for better performance
-
-4. **Permission denied errors**
-   - Ensure your Grafana user has access to the data source
-   - Check data source permissions in Grafana settings
-
-### Debug Mode
-
-Enable "Show Query Errors" in panel options to see detailed error messages in notifications.
+The implementation provides a powerful foundation for creating dynamic, data-driven text panels that can interact with any Grafana data source while maintaining security and performance standards.
